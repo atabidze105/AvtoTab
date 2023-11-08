@@ -1,0 +1,58 @@
+﻿using AvtoTab;
+
+class Program
+{
+    static void Main()
+    {
+        void accountChoshing(Avto[] avtos, int quantity) //Метод для выбора из массива объекта для применения метода
+        {
+            int nom = -1;
+            Console.WriteLine("Необходимо выбрать автомобиль чтобы продолжить.");
+            while ( nom > avtos.Length || nom < 0) 
+            {
+                Console.WriteLine($"Введите один из доступных номеров:\n\nот 1 до {quantity}:\n");
+                nom = Convert.ToInt32(Console.ReadLine()) ; //Выбор индекса элемента массива
+                if (nom > 0)
+                {
+                    if (nom <= avtos.Length)
+                    {
+                        avtos[nom - 1].commandCenter(avtos);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка. Введите значение в заданом диапазоне.\n");
+                    }
+                }
+                else 
+                {
+                    Console.WriteLine("Ошибка. Введите значение в заданом диапазоне.\n");
+                }
+            }
+            
+        }
+
+        Console.WriteLine("Чтобы начать работу, необходимо задать количество машин.\nВведите количество машин, которое хотите создать:");
+        int quantityOfMachines = Convert.ToInt32(Console.ReadLine());
+        Avto[] machines = new Avto[quantityOfMachines];
+        for (int i = 0; i < machines.Length; i++) //Цикл для создания элементов массива
+        {
+            machines[i] = new Avto();
+        }
+
+        accountChoshing(machines, quantityOfMachines); //Первое обращение к методу        
+
+        Console.WriteLine("\nЧтобы вернуться к выбору машины, нажмите \"Enter\".\nЧтобы выйти напишите что-нибудь и нажмите \"Enter\".\n");
+        string thisMachine = ""; //Переменная для поддержания работы следующего цикла
+        thisMachine = Console.ReadLine();
+
+        if (thisMachine == "")
+        {
+            do
+            {
+                accountChoshing(machines, quantityOfMachines);
+                Console.WriteLine("\nЧтобы вернуться к выбору машины, нажмите \"Enter\".\nЧтобы выйти напишите что-нибудь и нажмите \"Enter\".\n");
+                thisMachine = Console.ReadLine();
+            } while (thisMachine == ""); //Метод работает пока строка пуста
+        }
+    }
+}
