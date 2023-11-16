@@ -7,11 +7,11 @@ class Program
         void accountChoshing(Avto[] avtos, int quantity) //Метод для выбора из массива объекта для применения метода
         {
             int nom = -1;
-            Console.WriteLine("Необходимо выбрать автомобиль чтобы продолжить.");
-            while ( nom > avtos.Length || nom < 0) 
+            Console.WriteLine("\nНеобходимо выбрать автомобиль чтобы продолжить.");
+            while (nom > avtos.Length || nom < 0)
             {
                 Console.WriteLine($"Введите один из доступных номеров:\n\nот 1 до {quantity}:\n");
-                nom = Convert.ToInt32(Console.ReadLine()) ; //Выбор индекса элемента массива
+                nom = Convert.ToInt32(Console.ReadLine()); //Выбор индекса элемента массива
                 if (nom > 0)
                 {
                     if (nom <= avtos.Length)
@@ -23,13 +23,13 @@ class Program
                         Console.WriteLine("Ошибка. Введите значение в заданом диапазоне.\n");
                     }
                 }
-                else 
+                else
                 {
                     Console.WriteLine("Ошибка. Введите значение в заданом диапазоне.\n");
                 }
             }
-            
         }
+        
 
         Console.WriteLine("Чтобы начать работу, необходимо задать количество машин.\nВведите количество машин, которое хотите создать:");
         int quantityOfMachines = Convert.ToInt32(Console.ReadLine());

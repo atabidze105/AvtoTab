@@ -1,15 +1,15 @@
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\AvtoTab.csproj.AssemblyReference.cache
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\AvtoTab.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\AvtoTab.AssemblyInfoInputs.cache
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\AvtoTab.AssemblyInfo.cs
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\AvtoTab.csproj.CoreCompileInputs.cache
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\bin\Debug\net6.0\AvtoTab.exe
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\bin\Debug\net6.0\AvtoTab.deps.json
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\bin\Debug\net6.0\AvtoTab.runtimeconfig.json
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\bin\Debug\net6.0\AvtoTab.dll
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\bin\Debug\net6.0\AvtoTab.pdb
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\AvtoTab.dll
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\refint\AvtoTab.dll
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\AvtoTab.pdb
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\AvtoTab.genruntimeconfig.cache
-C:\Users\prdb\Desktop\IsayProjects\AvtoTab\obj\Debug\net6.0\ref\AvtoTab.dll
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\AvtoTab.csproj.AssemblyReference.cache
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\AvtoTab.GeneratedMSBuildEditorConfig.editorconfig
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\AvtoTab.AssemblyInfoInputs.cache
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\AvtoTab.AssemblyInfo.cs
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\AvtoTab.csproj.CoreCompileInputs.cache
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\bin\Debug\net6.0\AvtoTab.exe
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\bin\Debug\net6.0\AvtoTab.deps.json
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\bin\Debug\net6.0\AvtoTab.runtimeconfig.json
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\bin\Debug\net6.0\AvtoTab.dll
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\bin\Debug\net6.0\AvtoTab.pdb
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\AvtoTab.dll
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\refint\AvtoTab.dll
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\AvtoTab.pdb
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\AvtoTab.genruntimeconfig.cache
+D:\Visual Studio\Projects\AvtoTab\AvtoTab\obj\Debug\net6.0\ref\AvtoTab.dll

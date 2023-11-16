@@ -8,7 +8,6 @@
         private double _currentFuel; //Текущее кол-во бензина
         private double _distance;//скорость
         private double _milleage;//Пробег
-        private int _option;
 
         private void carCreation(string number, double fuelCapacity, double fuelConsumption) //Создание машины
         {
@@ -52,11 +51,11 @@
 
         private void Drive() //Цикл езды
         {
-            do 
+            do
             {
                 Console.WriteLine("\nНевозможно начать поездку с пустым бензобаком.\nТребуется дозаправка");
                 FillFuel();
-            } 
+            }
             while (Math.Floor(_currentFuel) == 0);
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
             getDistance();
@@ -84,8 +83,8 @@
 
         public void commandCenter(Avto[] avtos)
         {
-             while ( _number == null)
-             {
+            while (_number == null || _number == "")
+            {
                 Console.WriteLine("Необходимо создать машину чтобы продолжить.\nВведите номер машины:");
                 string avtoNumber = Console.ReadLine();
                 Console.WriteLine("Введите вместимость бензобака (в литрах):");
@@ -101,7 +100,7 @@
                         break;
                     }
                 }
-                if ( _number == "") //Условие не позволяет создать аккаунт с пустым номером
+                if (_number == "") //Условие не позволяет создать аккаунт с пустым номером
                 {
                     Console.WriteLine("Невозможно создать машину, данные введены некорректно.\n");
                 }
@@ -112,32 +111,31 @@
             }//Цикл не позволяет применять методы к объекту без номера
 
 
-                Console.WriteLine($"\n\nДобро пожаловать на панель управления машины {_number}.\n");
-                string continuation;
-                do
+            Console.WriteLine($"\n\nДобро пожаловать на панель управления машины {_number}.\n");
+            string continuation = "";
+            while (continuation == "")
+            {
+                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы заправить машину, выберите \"2\".\n Чтобы начать поездку, выберите \"3\".\n\n");
+                string option = Console.ReadLine();
+                switch (option)
                 {
-                    Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы заправить машину, выберите \"2\".\n Чтобы начать поездку, выберите \"3\".\n\n");
-                    _option = Convert.ToInt32(Console.ReadLine());
-                    switch (_option)
-                    {
-                        case 1:
-                            Console.WriteLine("\n");
-                            DisplayInfo(); 
-                            break;
-                        case 2:
-                            FillFuel();
-                            break;
-                        case 3:
-                            Drive();
-                            break;
-                        default: 
-                            Console.WriteLine("Функции с таким номером не существует.");
-                        break;    
+                    case "1":
+                        Console.WriteLine("\n");
+                        DisplayInfo();
+                        break;
+                    case "2":
+                        FillFuel();
+                        break;
+                    case "3":
+                        Drive();
+                        break;
+                    default:
+                        Console.WriteLine("Функции с таким номером не существует.");
+                        break;
                 }
-                    Console.WriteLine("\nЧтобы продолжить нажмите \"Enter\".\nЧтобы выйти напишите что-нибудь и нажмите \"Enter\".");
-                    continuation = Console.ReadLine();
-                } while (continuation == "");
-            
+                Console.WriteLine("\nЧтобы продолжить нажмите \"Enter\".\nЧтобы выйти напишите что-нибудь и нажмите \"Enter\".");
+                continuation = Console.ReadLine();
+            }
         }
 
 
