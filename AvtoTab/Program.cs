@@ -29,10 +29,21 @@ class Program
                 }
             }
         }
-        
 
-        Console.WriteLine("Чтобы начать работу, необходимо задать количество машин.\nВведите количество машин, которое хотите создать:");
-        int quantityOfMachines = Convert.ToInt32(Console.ReadLine());
+
+        Console.WriteLine("Чтобы начать работу, необходимо задать количество машин.");
+        int quantityOfMachines = 0;
+        while (quantityOfMachines <= 0)
+        {
+            Console.WriteLine("Введите количество машин, которое хотите создать:\n");
+            quantityOfMachines = Convert.ToInt32(Console.ReadLine());
+            if (quantityOfMachines <=0 )
+            {
+                Console.WriteLine("\nВведите значение больше нуля\n");
+                quantityOfMachines = 0;
+            }
+        }
+
         Avto[] machines = new Avto[quantityOfMachines];
         for (int i = 0; i < machines.Length; i++) //Цикл для создания элементов массива
         {
