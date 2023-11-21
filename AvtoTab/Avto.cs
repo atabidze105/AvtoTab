@@ -6,7 +6,7 @@
         private double _fuelCapacity; //Макс кол-во бензина в баке
         private double _fuelConsumption; //Расход топлива
         private double _currentFuel; //Текущее кол-во бензина
-        private double _distance;//скорость
+        private double _distance;//расстояние
         private double _milleage;//Пробег
 
         private void carCreation(string number, double fuelCapacity, double fuelConsumption) //Создание машины
@@ -22,14 +22,14 @@
 
         private void DisplayInfo() //Вывод информации о машине
         {
-            Console.WriteLine($"Номер машины: {_number}\nКоличество бензина в баке: {Math.Round(_fuelCapacity, 2)} литров\nРасход топлива на 100 км: {Math.Round(_fuelConsumption, 2)} литров\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.\nПробег: {_milleage} км.");
+            Console.WriteLine($"Номер машины: {_number}\nКоличество бензина в баке: {Math.Round(_fuelCapacity, 2)} литров\nРасход топлива на 100 км: {Math.Round(_fuelConsumption, 2)} литров\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.\nПробег: {Math.Round(_milleage, 2)} км.");
         }
 
         private void FillFuel() //Заправка бака пользователем
         {
             Console.WriteLine($"\nВведите кол-во бензина (в литрах), на которое хотите заправить машину (макс значение:{Math.Round(_fuelCapacity, 2)}).\n");
             double fuelAmount = Convert.ToDouble(Console.ReadLine());
-            if (_currentFuel + fuelAmount <= _fuelCapacity) //Условие не позволяет пользователю добавить топлива больше, чем машина может вместить
+            if (_currentFuel + fuelAmount <= _fuelCapacity && fuelAmount > 0) //Условие не позволяет пользователю добавить топлива больше, чем машина может вместить, а также не позволяет ввести отрицательное значение
             {
                 _currentFuel += fuelAmount;
                 Console.WriteLine($"\nМашина заправлена на {Math.Round(fuelAmount, 2)} литров.\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.");
@@ -46,12 +46,12 @@
             string disString = Console.ReadLine();
             string[] dist = disString.Split(' '); //Разбиение строки на элементы массива
 
-            _distance = Math.Sqrt(Math.Pow(Convert.ToDouble(dist[0]) - Convert.ToDouble(dist[1]), 2) + Math.Pow(Convert.ToDouble(dist[2]) - Convert.ToDouble(dist[3]), 2)); //вычисление расстояния
+            _distance = Math.Sqrt(Math.Pow(Convert.ToDouble(dist[2]) - Convert.ToDouble(dist[0]), 2) + Math.Pow(Convert.ToDouble(dist[3]) - Convert.ToDouble(dist[1]), 2)); //вычисление расстояния
         }
 
         private void Drive() //Цикл езды
         {
-            while (Math.Floor(_currentFuel) == 0)
+            while (Math.Floor(_currentFuel) == 0) //Если у машины нет топлива, произойдет обращение к методу заправки
             {
                 Console.WriteLine("\nНевозможно начать поездку с пустым бензобаком.\nТребуется дозаправка");
                 FillFuel();
@@ -81,11 +81,11 @@
 
         }
 
-        public void commandCenter(Avto[] avtos)
+        public void commandCenter(Avto[] avtos) //Главный метод
         {
-            while (_number == null || _number == "")
+            while (_number == null || _number == "") //Если у полей объекта нет значений, то в цикле они ему присваиваются
             {
-                Console.WriteLine("Необходимо создать машину чтобы продолжить.\nВведите номер машины:");
+                Console.WriteLine("\nНеобходимо создать машину чтобы продолжить.\nВведите номер машины:");
                 string avtoNumber = Console.ReadLine();
                 Console.WriteLine("Введите вместимость бензобака (в литрах):");
                 double avtoFCapacity = Convert.ToDouble(Console.ReadLine());
@@ -96,11 +96,11 @@
                     if (avtoNumber == avto._number)
                     {
                         avtoNumber = "";
-                        Console.WriteLine("Введенный номер занят.");
+                        Console.WriteLine("\nВведенный номер занят.");
                         break;
                     }
                 }
-                if (_number == "" || avtoFCapacity <= 0 || avtoFConsumption <= 0) //Условие не позволяет создать аккаунт с пустым номером
+                if (avtoNumber == "" || avtoFCapacity <= 0 || avtoFConsumption <= 0) //Условие не позволяет создать аккаунт с пустым номером
                 {
                     Console.WriteLine("Невозможно создать машину, данные введены некорректно.\n");
                 }
@@ -108,7 +108,7 @@
                 {
                     carCreation(avtoNumber, avtoFCapacity, avtoFConsumption);
                 }
-            }//Цикл не позволяет применять методы к объекту без номера
+            }
 
 
             Console.WriteLine($"\n\nДобро пожаловать на панель управления машины {_number}.\n");
@@ -130,7 +130,7 @@
                         Drive();
                         break;
                     default:
-                        Console.WriteLine("Функции с таким номером не существует.");
+                        Console.WriteLine("\nКоманды с таким номером не существует.");
                         break;
                 }
                 Console.WriteLine("\nЧтобы продолжить нажмите \"Enter\".\nЧтобы выйти напишите что-нибудь и нажмите \"Enter\".");
