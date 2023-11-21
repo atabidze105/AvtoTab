@@ -51,12 +51,12 @@
 
         private void Drive() //Цикл езды
         {
-            do
+            while (Math.Floor(_currentFuel) == 0)
             {
                 Console.WriteLine("\nНевозможно начать поездку с пустым бензобаком.\nТребуется дозаправка");
                 FillFuel();
             }
-            while (Math.Floor(_currentFuel) == 0);
+            
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
             getDistance();
             Console.WriteLine($"\nНеобходимо проехать {_distance} км.\n\nНачало поездки.");
@@ -100,7 +100,7 @@
                         break;
                     }
                 }
-                if (_number == "" ||avtoFCapacity <= 0 || avtoFConsumption <= 0) //Условие не позволяет создать аккаунт с пустым номером
+                if (_number == "" || avtoFCapacity <= 0 || avtoFConsumption <= 0) //Условие не позволяет создать аккаунт с пустым номером
                 {
                     Console.WriteLine("Невозможно создать машину, данные введены некорректно.\n");
                 }

@@ -58,12 +58,12 @@ class Program
 
         if (thisMachine == "")
         {
-            do
+            while (thisMachine == "")
             {
                 accountChoshing(machines, quantityOfMachines);
                 Console.WriteLine("\nЧтобы вернуться к выбору машины, нажмите \"Enter\".\nЧтобы выйти напишите что-нибудь и нажмите \"Enter\".\n");
                 thisMachine = Console.ReadLine();
-            } while (thisMachine == ""); //Метод работает пока строка пуста
+            } //Метод работает пока строка пуста
         }
     }
 }
