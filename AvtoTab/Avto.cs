@@ -1,15 +1,15 @@
 ﻿namespace AvtoTab
 {
-    public class Avto
+    internal class Avto
     {
-        private string _number; //Номер машины
-        private double _fuelCapacity; //Макс кол-во бензина в баке
-        private double _fuelConsumption; //Расход топлива
-        private double _currentFuel; //Текущее кол-во бензина
-        private double _distance;//расстояние
-        private double _milleage;//Пробег
+        protected string _number; //Номер машины
+        protected double _fuelCapacity; //Макс кол-во бензина в баке
+        protected double _fuelConsumption; //Расход топлива
+        protected double _currentFuel; //Текущее кол-во бензина
+        protected double _distance;//расстояние
+        protected double _milleage;//Пробег
 
-        private void carCreation(string number, double fuelCapacity, double fuelConsumption) //Создание машины
+        protected virtual void carCreation(string number, double fuelCapacity, double fuelConsumption) //Создание машины
         {
             _number = number;
             _fuelCapacity = fuelCapacity;
@@ -20,12 +20,12 @@
             Console.WriteLine("Машина создана успешно.");
         }
 
-        private void DisplayInfo() //Вывод информации о машине
+        protected void DisplayInfo() //Вывод информации о машине
         {
             Console.WriteLine($"Номер машины: {_number}\nКоличество бензина в баке: {Math.Round(_fuelCapacity, 2)} литров\nРасход топлива на 100 км: {Math.Round(_fuelConsumption, 2)} литров\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.\nПробег: {Math.Round(_milleage, 2)} км.");
         }
 
-        private void FillFuel() //Заправка бака пользователем
+        protected void FillFuel() //Заправка бака пользователем
         {
             Console.WriteLine($"\nВведите кол-во бензина (в литрах), на которое хотите заправить машину (макс значение:{Math.Round(_fuelCapacity, 2)}).\n");
             double fuelAmount = Convert.ToDouble(Console.ReadLine());
@@ -40,7 +40,7 @@
             }
         }
 
-        private void getDistance()//Высчитывание дистанции по кординатам
+        protected void getDistance()//Высчитывание дистанции по кординатам
         {
             Console.WriteLine("\nВведите начальные и конечные координаты в формате \"x1 y1 x2 y2\".");
             string disString = Console.ReadLine();
@@ -49,7 +49,7 @@
             _distance = Math.Sqrt(Math.Pow(Convert.ToDouble(dist[2]) - Convert.ToDouble(dist[0]), 2) + Math.Pow(Convert.ToDouble(dist[3]) - Convert.ToDouble(dist[1]), 2)); //вычисление расстояния
         }
 
-        private void Drive() //Цикл езды
+        protected void Drive() //Цикл езды
         {
             while (Math.Floor(_currentFuel) == 0) //Если у машины нет топлива, произойдет обращение к методу заправки
             {
