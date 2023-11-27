@@ -11,10 +11,13 @@ namespace AvtoTab
     {
         protected int _people;
 
-        private override void carCreation(string number, double fuelCapacity, double fuelConsumption)
+        protected override void carCreation(string number, double fuelCapacity, double fuelConsumption)
         {
             base.carCreation( number,  fuelCapacity,  fuelConsumption);
+            _weight = 3;
             _people = 0;
         }
+
+
     }
 }

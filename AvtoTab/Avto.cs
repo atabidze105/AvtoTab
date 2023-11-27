@@ -8,12 +8,14 @@
         protected double _currentFuel; //Текущее кол-во бензина
         protected double _distance;//расстояние
         protected double _milleage;//Пробег
+        protected double _weight;//Вес
 
         protected virtual void carCreation(string number, double fuelCapacity, double fuelConsumption) //Создание машины
         {
             _number = number;
             _fuelCapacity = fuelCapacity;
             _fuelConsumption = fuelConsumption;
+            _weight = 2;
             _currentFuel = 0;
             _distance = 0;
             _milleage = 0;
