@@ -9,6 +9,9 @@
         protected double _distance;//расстояние
         protected double _milleage;//Пробег
         protected double _weight;//Вес
+        protected double _speed; //Скорость
+        protected double _maxSpeed; //Максимальная скорость
+
 
         protected virtual void carCreation(string number, double fuelCapacity, double fuelConsumption) //Создание машины
         {
@@ -19,6 +22,8 @@
             _currentFuel = 0;
             _distance = 0;
             _milleage = 0;
+            _speed = 0;
+            _maxSpeed = 180;
             Console.WriteLine("Машина создана успешно.");
         }
 
@@ -59,6 +64,8 @@
                 FillFuel();
             }
             
+
+
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
             getDistance();
             Console.WriteLine($"\nНеобходимо проехать {_distance} км.\n\nНачало поездки.");
