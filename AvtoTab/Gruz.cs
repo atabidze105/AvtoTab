@@ -16,7 +16,7 @@ namespace AvtoTab
             base.carCreation(number, fuelCapacity, fuelConsumption);
             _weight = 4;
             _people = 0;
-            _maxCapacity = 2.1;
+            _maxCapacity = 2;
         }
 
     }

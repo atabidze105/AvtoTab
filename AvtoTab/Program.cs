@@ -7,7 +7,13 @@ class Program
         void accountChoshing(Avto[] avtos, int quantity) //Метод для выбора из массива объекта для применения метода
         {
             int nom = -1;
+            //int i = 1;
             Console.WriteLine("\nНеобходимо выбрать автомобиль чтобы продолжить.");
+            //foreach (Avto avto in avtos) 
+            //{
+            //    Console.WriteLine($"{i}. {avto.Number}");
+            //    i++;
+            //}
             while (nom > avtos.Length || nom < 0)
             {
                 Console.WriteLine($"Введите один из доступных номеров:\n\nот 1 до {quantity}:\n");

@@ -12,6 +12,11 @@
         protected double _speed; //Скорость
         protected double _maxSpeed; //Максимальная скорость
 
+        public string Number
+        {
+            get { return _number; }
+        }
+
 
         protected virtual void carCreation(string number, double fuelCapacity, double fuelConsumption) //Создание машины
         {
@@ -63,25 +68,27 @@
                 Console.WriteLine("\nНевозможно начать поездку с пустым бензобаком.\nТребуется дозаправка");
                 FillFuel();
             }
-            
-
 
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
             getDistance();
             Console.WriteLine($"\nНеобходимо проехать {_distance} км.\n\nНачало поездки.");
             _distance -= fuelDistance;
+            _speed = _maxSpeed;
 
             while (_distance > 0) //Цикл езды
             {
+                _speed = 0;
                 _currentFuel = 0; //обнуление кол-ва топлива
                 _milleage += fuelDistance; //Увеличение пробега
 
                 Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nОсталось ехать {Math.Round(_distance, 2)} км.\nТребуется дозаправка.");
                 FillFuel(); //Обращение к методу заправки
+                _speed = _maxSpeed;
                 fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
                 _distance -= fuelDistance; //Обновление расстояния, которое необходимо проехать
             }
 
+            _speed = 0;
             _milleage += (fuelDistance += _distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
             _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
 
