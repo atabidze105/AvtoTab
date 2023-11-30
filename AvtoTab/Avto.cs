@@ -8,7 +8,6 @@
         protected double _currentFuel; //Текущее кол-во бензина
         protected double _distance;//расстояние
         protected double _milleage;//Пробег
-        protected double _weight;//Вес
         protected double _speed; //Скорость
         protected double _maxSpeed; //Максимальная скорость
 
@@ -18,12 +17,11 @@
         }
 
 
-        protected virtual void carCreation(string number, double fuelCapacity, double fuelConsumption) //Создание машины
+        protected virtual void carCreation(string number, double fuelCapacity) //Создание машины
         {
             _number = number;
             _fuelCapacity = fuelCapacity;
-            _fuelConsumption = fuelConsumption;
-            _weight = 2;
+            _fuelConsumption = 0;
             _currentFuel = 0;
             _distance = 0;
             _milleage = 0;
@@ -51,10 +49,58 @@
                 Console.WriteLine("\nНевозможно добавить столько топлива.");
             }
         }
+        
+
+        protected void speedUp() //Разгон
+        {
+            while (true)
+            {
+                try //здесь try catch ловит ошибки, появляющиеся при несоответствии введенного значения типу double
+                {
+                    Console.WriteLine("Введите значение скорости (от 1 до 180 км/ч), до которого хотите разогнаться:");
+                    _speed = Convert.ToDouble(Console.ReadLine());
+                    if (_speed > 0 && _speed <= 180)
+                    {
+                        fuelConsumption(_speed);
+                        break; //Выход из цикла
+                    }
+                    else
+                    {
+                        Console.WriteLine("Введено значение вне заданного диапазона. Попробуйте снова.\n");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Введено некорректное значение. Попробуйте снова.\n");
+                }
+            }
+        }
+
+        protected void fuelConsumption(double speed) //рассчет расхода топлива от скорости
+        {
+            if (speed >= 0 && speed <= 45)
+            {
+                _fuelConsumption = 12;
+            }
+            else
+            {
+                if (speed > 45 && speed <= 100)
+                {
+                    _fuelConsumption = 9;
+                }
+                else
+                {
+                    if (speed > 100 && speed <= 180)
+                    {
+                        _fuelConsumption = 12.5;
+                    }
+                }
+            }
+        }
 
         protected void getDistance()//Высчитывание дистанции по кординатам
         {
-            Console.WriteLine("\nВведите начальные и конечные координаты в формате \"x1 y1 x2 y2\".");
+            Console.WriteLine("\nВведите начальные координаты в формате \"x1 y1 x2 y2\".");
             string disString = Console.ReadLine();
             string[] dist = disString.Split(' '); //Разбиение строки на элементы массива
 
@@ -69,11 +115,12 @@
                 FillFuel();
             }
 
-            double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
             getDistance();
+            speedUp();
+            
+            double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
             Console.WriteLine($"\nНеобходимо проехать {_distance} км.\n\nНачало поездки.");
             _distance -= fuelDistance;
-            _speed = _maxSpeed;
 
             while (_distance > 0) //Цикл езды
             {
@@ -83,7 +130,7 @@
 
                 Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nОсталось ехать {Math.Round(_distance, 2)} км.\nТребуется дозаправка.");
                 FillFuel(); //Обращение к методу заправки
-                _speed = _maxSpeed;
+                speedUp();
                 fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
                 _distance -= fuelDistance; //Обновление расстояния, которое необходимо проехать
             }
@@ -105,8 +152,6 @@
                 string avtoNumber = Console.ReadLine();
                 Console.WriteLine("Введите вместимость бензобака (в литрах):");
                 double avtoFCapacity = Convert.ToDouble(Console.ReadLine());
-                Console.WriteLine("Введите расход топлива на 100 км (в литрах):");
-                double avtoFConsumption = Convert.ToDouble(Console.ReadLine());
                 foreach (Avto avto in avtos) //Проверка на уникальность номера
                 {
                     if (avtoNumber == avto._number)
@@ -116,13 +161,13 @@
                         break;
                     }
                 }
-                if (avtoNumber == "" || avtoFCapacity <= 0 || avtoFConsumption <= 0) //Условие не позволяет создать аккаунт с пустым номером
+                if (avtoNumber == "" || avtoFCapacity <= 0) //Условие не позволяет создать аккаунт с пустым номером
                 {
                     Console.WriteLine("Невозможно создать машину, данные введены некорректно.\n");
                 }
                 else
                 {
-                    carCreation(avtoNumber, avtoFCapacity, avtoFConsumption);
+                    carCreation(avtoNumber, avtoFCapacity);
                 }
             }
 

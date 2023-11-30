@@ -10,10 +10,12 @@ namespace AvtoTab
     {
         protected double _maxCapacity; //грузоподъемность
         protected int _people; //Кол-во людей
+        protected int _weight; //Вес
 
-        protected override void carCreation(string number, double fuelCapacity, double fuelConsumption)
+
+        protected override void carCreation(string number, double fuelCapacity)
         {
-            base.carCreation(number, fuelCapacity, fuelConsumption);
+            base.carCreation(number, fuelCapacity);
             _weight = 4;
             _people = 0;
             _maxCapacity = 2;
