@@ -10,6 +10,10 @@ namespace AvtoTab
         protected double _fuelCapacity; //Макс кол-во бензина в баке
         protected double _fuelConsumption; //Расход топлива
         protected double _currentFuel; //Текущее кол-во бензина
+        protected double _startX; //Поля для координат (начальные и конечные)
+        protected double _startY;
+        protected double _endX;
+        protected double _endY;
         protected double _distance;//расстояние
         protected double _milleage;//Пробег
         protected double _speed; //Скорость
@@ -18,7 +22,7 @@ namespace AvtoTab
         private void carStart(List<Avto> avtos)
         {
             Console.WriteLine("Добро пожаловать в Машины 2. Для начала работы необходимо создать хотя бы одну машину.");
-            while (true) 
+            while (true)
             {
                 try
                 {
@@ -32,7 +36,6 @@ namespace AvtoTab
                             case "1":
                             case "2":
                             case "3":
-                                _type = answerType;
                                 break;
                             default:
                                 Console.WriteLine("\nВведено некорректное значение. Попробуйте снова.\n");
@@ -61,7 +64,7 @@ namespace AvtoTab
                     else
                     {
                         var car = _type == "1" ? new Avto() : (_type == "2" ? new Bus() : new Gruz()); //Если тип 1, то создаст автомобиль, если 2 - автобус, остальное - грузовик.
-                        car.carCreation(avtoNumber, avtoFCapacity);
+                        car.carCreation(avtoNumber, avtoFCapacity, answerType);
                         avtos.Add(car);
                         string answer = "";
                         while (answer == "")
@@ -72,7 +75,6 @@ namespace AvtoTab
                             {
                                 case "да":
                                 case "нет":
-                                    Console.WriteLine();
                                     break;
                                 default:
                                     answer = "";
@@ -97,24 +99,8 @@ namespace AvtoTab
             int i = 1;
             foreach (Avto avto in avtos)
             {
-                Console.WriteLine($"{i}. {avto._number} - ");
-                if (_type == "1")
-                {
-                    Console.Write("легковой автомобиль");
-                }
-                else
-                {
-                    if (_type == "2")
-                    {
-                        Console.Write("грузовик");
-                    }
-                    else
-                    {
-                        if (_type == "3")
-                            Console.Write("автобус");
-                    }
-                }
-                Console.Write($" - Топливо: {_currentFuel}/{_fuelCapacity} - Пробег: {_milleage}");
+                string type = avto._type == "1" ? "автомобиль" : (avto._type == "2" ? "автобус" : "грузовик");
+                Console.Write($"\n{i}. {avto._number} - {type} - Топливо: {_currentFuel}/{_fuelCapacity} - Пробег: {_milleage}");
                 i++;
             }
         }
@@ -122,7 +108,7 @@ namespace AvtoTab
         public void AVTO(List<Avto> avtos)
         {
             carStart(avtos);
-            Console.WriteLine("Выберите машину, с которой хотите взаимодействовать:\n");
+            Console.WriteLine("\nВыберите машину, с которой хотите взаимодействовать:");
             string answer = "";
             int nom = -1;
             carList(avtos);
@@ -136,14 +122,15 @@ namespace AvtoTab
                         {
                             carList(avtos);
                         }
-                        
+
                         while (true)
                         {
-                            Console.WriteLine("\nВведите номер машины из списка:\n");
+                            Console.WriteLine("\n\nВведите номер машины из списка:\n");
                             nom = Convert.ToInt32(Console.ReadLine());
                             if (nom > 0 && nom <= avtos.Count)
                             {
                                 avtos[nom - 1].commandCenter(avtos);
+                                answer = " ";
                                 break;
                             }
                             else
@@ -151,10 +138,10 @@ namespace AvtoTab
                                 Console.WriteLine("\nМашины с таким номером нет в списке. Попробуйте снова.\n");
                             }
                         }
-                        
+
                         while (answer == " ")
                         {
-                            Console.WriteLine("\nХотите вернуться к выбору персонажа? (да/нет)/n");
+                            Console.WriteLine("\nХотите вернуться к выбору машины? (да/нет)\n");
                             answer = Console.ReadLine();
                             switch (answer)
                             {
@@ -180,10 +167,11 @@ namespace AvtoTab
             }
         }
 
-        protected virtual void carCreation(string number, double fuelCapacity) //Создание машины
+        protected virtual void carCreation(string number, double fuelCapacity, string type) //Создание машины
         {
             _number = number;
             _fuelCapacity = fuelCapacity;
+            _type = type;
             _fuelConsumption = 0;
             _currentFuel = 0;
             _distance = 0;
@@ -195,7 +183,8 @@ namespace AvtoTab
 
         protected void DisplayInfo() //Вывод информации о машине
         {
-            Console.WriteLine($"Номер машины: {_number}\nКоличество бензина в баке: {Math.Round(_fuelCapacity, 2)} литров\nРасход топлива на 100 км: {Math.Round(_fuelConsumption, 2)} литров\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.\nПробег: {Math.Round(_milleage, 2)} км.");
+            string type = _type == "1" ? "автомобиль" : (_type == "2" ? "автобус" : "грузовик");            
+            Console.WriteLine($"Номер машины: {_number}\nТип: {type}\nМаксимальное количество бензина в баке: {Math.Round(_fuelCapacity, 2)} литров\nРасход топлива на 100 км: {Math.Round(_fuelConsumption, 2)} литров\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.\nПробег: {Math.Round(_milleage, 2)} км.");
         }
 
         protected void speedUp() //Разгон
@@ -204,7 +193,7 @@ namespace AvtoTab
             {
                 try //здесь и далее try catch ловит ошибки, появляющиеся при несоответствии введенного значения заданному типу
                 {
-                    Console.WriteLine("Введите значение скорости (от 1 до 180 км/ч), до которого хотите разогнаться:");
+                    Console.WriteLine("\nВведите значение скорости (от 1 до 180 км/ч), до которого хотите разогнаться:\n");
                     _speed = Convert.ToDouble(Console.ReadLine());
                     if (_speed > 0 && _speed <= 180)
                     {
@@ -213,19 +202,19 @@ namespace AvtoTab
                     }
                     else
                     {
-                        Console.WriteLine("Введено значение вне заданного диапазона. Попробуйте снова.\n");
+                        Console.WriteLine("\nВведено значение вне заданного диапазона. Попробуйте снова.");
                     }
                 }
                 catch
                 {
-                    Console.WriteLine("Введено некорректное значение. Попробуйте снова.\n");
+                    Console.WriteLine("\nВведено некорректное значение. Попробуйте снова.");
                 }
             }
-        }  
+        }
 
         protected void FillFuel() //Заправка бака пользователем
         {
-            while ( true )
+            while (true)
             {
                 try
                 {
@@ -251,24 +240,7 @@ namespace AvtoTab
 
         protected void fuelConsumption(double speed) //рассчет расхода топлива от скорости
         {
-            if (speed >= 0 && speed <= 45)
-            {
-                _fuelConsumption = 12;
-            }
-            else
-            {
-                if (speed > 45 && speed <= 100)
-                {
-                    _fuelConsumption = 9;
-                }
-                else
-                {
-                    if (speed > 100 && speed <= 180)
-                    {
-                        _fuelConsumption = 12.5;
-                    }
-                }
-            }
+            _fuelConsumption = speed >= 0 && speed <= 45 ? 12 : (speed > 45 && speed <= 100 ? 9 : 12.5);
         }
 
         protected void getDistance()//Вычисление дистанции по кординатам
@@ -277,24 +249,31 @@ namespace AvtoTab
             {
                 try
                 {
-                    Console.WriteLine("\nВведите начальные и конечные координаты в формате \"x1 y1 x2 y2\".\n");
-                    string disString = Console.ReadLine();
-                    string[] dist = disString.Split(' '); //Разбиение строки на элементы массива
+                    Console.WriteLine("\nНеобходимо ввести начальные координаты.\nВведите \"x\":\n");
+                    _startX = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine("\nВведите \"y\":\n");
+                    _startY = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine("\nНеобходимо ввести конечные координаты.\nВведите \"x\":\n");
+                    _endX = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine("\nВведите \"y\":\n");
+                    _endY = Convert.ToDouble(Console.ReadLine());
 
-                    if (dist.Length != 4)
-                    {
-                        Console.WriteLine("Координаты введены некорректно. Попробуйте снова.");
-                    }
-                    else
-                    {
-                        _distance = Math.Sqrt(Math.Pow(Convert.ToDouble(dist[2]) - Convert.ToDouble(dist[0]), 2) + Math.Pow(Convert.ToDouble(dist[3]) - Convert.ToDouble(dist[1]), 2)); //вычисление расстояния
-                        break;
-                    }
+                    _distance = Math.Sqrt(Math.Pow(_endX - _startX, 2) + Math.Pow(_endY - _endX, 2)); //вычисление расстояния
+
+                    break;
                 }
                 catch
                 {
-                    Console.WriteLine("Координаты введены некорректно. Попробуйте снова.");
+                    Console.WriteLine("\nКоординаты введены некорректно. Попробуйте снова с самого начала.");
                 }
+            }
+        }
+
+        protected void distancePlanning(List<Avto> avtos) //Составление траектории движения
+        {
+            foreach (Avto avto in avtos)
+            {
+
             }
         }
 
@@ -308,7 +287,7 @@ namespace AvtoTab
 
             getDistance();
             speedUp();
-            
+
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
             Console.WriteLine($"\nНеобходимо проехать {_distance} км.\n\nНачало поездки.");
             _distance -= fuelDistance;
@@ -337,7 +316,7 @@ namespace AvtoTab
 
         protected void commandCenter(List<Avto> avtos) //Главный метод
         {
-            
+
             Console.WriteLine($"\n\nДобро пожаловать на панель управления машины {_number}.\n");
             string continuation = "";
             while (continuation == "")
@@ -360,7 +339,7 @@ namespace AvtoTab
                         Console.WriteLine("\nКоманды с таким номером не существует.");
                         break;
                 }
-                Console.WriteLine("\nЧтобы продолжить нажмите \"Enter\".\nЧтобы выйти напишите что-нибудь и нажмите \"Enter\".");
+                Console.WriteLine("\nЧтобы продолжить нажмите \"Enter\".\nЧтобы выйти напишите что-нибудь и нажмите \"Enter\".\n");
                 continuation = Console.ReadLine();
             }
         }
