@@ -272,7 +272,7 @@ namespace AvtoTab
                     Console.WriteLine("\nВведите \"y\":\n");
                     _endY = Convert.ToDouble(Console.ReadLine());
 
-                    _distance = Math.Sqrt(Math.Pow(_endX - _startX, 2) + Math.Pow(_endY - _endX, 2)); //вычисление расстояния
+                    _distance = Math.Sqrt(Math.Pow(_endX - _startX, 2) + Math.Pow(_endY - _startY, 2)); //вычисление расстояния
 
                     Console.WriteLine();
                     distancePlanning(avtos);
