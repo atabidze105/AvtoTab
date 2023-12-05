@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Runtime.InteropServices;
-
+﻿
 namespace AvtoTab
 {
     internal class Avto
@@ -198,7 +196,7 @@ namespace AvtoTab
         protected void DisplayInfo() //Вывод информации о машине
         {
             string type = _type == "1" ? "автомобиль" : (_type == "2" ? "автобус" : "грузовик");            
-            Console.WriteLine($"Номер машины: {_number}\nТип: {type}\nМаксимальное количество бензина в баке: {Math.Round(_fuelCapacity, 2)} литров\nРасход топлива на 100 км: {Math.Round(_fuelConsumption, 2)} литров\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.\nПробег: {Math.Round(_milleage, 2)} км.");
+            Console.WriteLine($"Номер машины: {_number}\nТип: {type}\nМаксимальное количество бензина в баке: {Math.Round(_fuelCapacity, 2)} литров\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.\nПробег: {Math.Round(_milleage, 2)} км.");
         }
 
         protected virtual void speedUp() //Разгон
@@ -347,7 +345,7 @@ namespace AvtoTab
             _milleage += (fuelDistance += _distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
             _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
 
-            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\n\nПоездка завершена.")
+            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\n\nПоездка завершена.");
         }
 
         protected void commandCenter(List<Avto> avtos) //Главный метод

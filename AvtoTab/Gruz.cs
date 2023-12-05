@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace AvtoTab
 {
@@ -41,12 +37,9 @@ namespace AvtoTab
                     Console.WriteLine("\nВведите \"y\":\n");
                     _deliveryY = Convert.ToDouble(Console.ReadLine());
 
-
                     _distance = Math.Sqrt(Math.Pow(_endX - _startX, 2) + Math.Pow(_endY - _startY, 2)); //вычисление расстояния к точке погрузки
                     _distanceToUnload = Math.Sqrt(Math.Pow(_deliveryX - _endX, 2) + Math.Pow(_deliveryY - _endY, 2)); //вычисление расстояния к точке разгрузки
                     _distanceBack = Math.Sqrt(Math.Pow(_startX - _deliveryX, 2) + Math.Pow(_startY - _deliveryY, 2)); //вычисление расстояния к точке погрузки
-
-
 
                     Console.WriteLine();
                     distancePlanning(avtos);
@@ -115,14 +108,14 @@ namespace AvtoTab
                     if (_weightCargo > 0.1 && _weightCargo <= 1)
                     {
                         _speed *= 0.6;
-                        Console.WriteLine($"\nПредупреждение! С текущим весом груза в {_weightCargo} т скорость уменьшена на 40%.") ;
+                        Console.WriteLine($"\nПредупреждение! С текущим весом груза в {_weightCargo} т скорость уменьшена на 40% - {_speed} км/ч.") ;
                     }
                     else
                     {
                         if (_weightCargo > 1 && _weightCargo <= 2)
                         {
                             _speed *= 0.2;
-                            Console.WriteLine($"\nПредупреждение! С текущим весом груза в {_weightCargo} т скорость уменьшена на 80%.");
+                            Console.WriteLine($"\nПредупреждение! С текущим весом груза в {_weightCargo} т скорость уменьшена на 80% - {_speed} км/ч.");
                         }
                     }
                     if (_speed > 0 && _speed <= 180)
@@ -154,7 +147,7 @@ namespace AvtoTab
                 _currentFuel = 0; //обнуление кол-ва топлива
                 _milleage += fuelDistance; //Увеличение пробега
 
-                Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nОсталось ехать {Math.Round(distance, 2)} км.\nТребуется дозаправка.");
+                Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nВес груза: {_weightCargo} т.\nОсталось ехать {Math.Round(distance, 2)} км.\nТребуется дозаправка.");
                 FillFuel(); //Обращение к методу заправки
                 speedUp();
                 fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
@@ -162,13 +155,14 @@ namespace AvtoTab
             }
 
             _speed = 0;
+            _fuelConsumption = 0;
             _milleage += (fuelDistance += distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
             _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
 
-            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.");
+            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nВес груза: {_weightCargo} т.");
         }
 
-        protected override void Drive(List<Avto> avtos)
+        protected override void Drive(List<Avto> avtos) //Поездка для грузовика
         {
             while (Math.Floor(_currentFuel) == 0) //Если у машины нет топлива, произойдет обращение к методу заправки
             {
@@ -180,29 +174,6 @@ namespace AvtoTab
             speedUp();
 
             subDrive(_distance);
-
-            //double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
-            //Console.WriteLine($"\nНеобходимо проехать {_distance} км.\n\nНачало поездки.");
-            //_distance -= fuelDistance;
-
-            //while (_distance > 0) //Цикл езды
-            //{
-            //    _speed = 0;
-            //    _currentFuel = 0; //обнуление кол-ва топлива
-            //    _milleage += fuelDistance; //Увеличение пробега
-
-            //    Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nОсталось ехать {Math.Round(_distance, 2)} км.\nТребуется дозаправка.");
-            //    FillFuel(); //Обращение к методу заправки
-            //    speedUp();
-            //    fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
-            //    _distance -= fuelDistance; //Обновление расстояния, которое необходимо проехать
-            //}
-
-            //_speed = 0;
-            //_milleage += (fuelDistance += _distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
-            //_currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
-
-            //Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.");
 
             Console.WriteLine("\nМашина прибыла в точку погрузки.");
             load();
