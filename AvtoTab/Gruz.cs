@@ -10,6 +10,10 @@ namespace AvtoTab
     {
         protected double _maxCapacity; //грузоподъемность
         protected double _weightCargo; //Вес груза
+        protected double _distanceToLoad;
+        protected double _distabceToUnload;
+        protected double _deliuveryX;
+        protected double _deliuveryY;
 
 
         protected override void carCreation(string number, double fuelCapacity, string type)
@@ -18,13 +22,13 @@ namespace AvtoTab
             _maxCapacity = 2;
         }
 
-        protected override void getDistance(List<Avto> avtos) //Грузовик останавливается в трех местах. добавить
+        protected override void getDistance(List<Avto> avtos) //Грузовик останавливается в трех местах. всего 4 точки, после второй остановки возвращается к начальным координатам
         {
             while (true)
             {
                 try
                 {
-                    Console.WriteLine("\nНеобходимо ввести начальные координаты.\nВведите \"x\":\n");
+                    Console.WriteLine("\nНеобходимо ввести координаты .\nВведите \"x\":\n");
                     _startX = Convert.ToDouble(Console.ReadLine());
                     Console.WriteLine("\nВведите \"y\":\n");
                     _startY = Convert.ToDouble(Console.ReadLine());
