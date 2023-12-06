@@ -12,11 +12,6 @@ namespace AvtoTab
         protected double _deliveryY;
 
 
-        protected override void carCreation(string number, double fuelCapacity, string type)
-        {
-            base.carCreation(number, fuelCapacity, type);
-            _maxCapacity = 2;
-        }
 
         protected override void getDistance(List<Avto> avtos) //Грузовик останавливается в трех местах. всего 4 точки, после второй остановки возвращается к начальным координатам
         {
@@ -105,21 +100,15 @@ namespace AvtoTab
                     Console.WriteLine("\nВведите значение скорости (от 1 до 180 км/ч), до которого хотите разогнаться:\n");
                     _speed = Convert.ToDouble(Console.ReadLine());
                     
-                    if (_weightCargo > 0.1 && _weightCargo <= 1)
-                    {
-                        _speed *= 0.6;
-                        Console.WriteLine($"\nПредупреждение! С текущим весом груза в {_weightCargo} т скорость уменьшена на 40% - {_speed} км/ч.") ;
-                    }
-                    else
-                    {
-                        if (_weightCargo > 1 && _weightCargo <= 2)
-                        {
-                            _speed *= 0.2;
-                            Console.WriteLine($"\nПредупреждение! С текущим весом груза в {_weightCargo} т скорость уменьшена на 80% - {_speed} км/ч.");
-                        }
-                    }
+                    _speed = _weightCargo > 0.1 && _weightCargo <= 1 ? _speed * 0.6 : (_weightCargo > 1 && _weightCargo <= 2 ? _speed * 0.2 : _speed);
+                    string persent = _weightCargo > 0.1 && _weightCargo <= 1 ? "40" : (_weightCargo > 1 && _weightCargo <= 2 ? "80" : "");
+
                     if (_speed > 0 && _speed <= 180)
                     {
+                        if (_weightCargo > 0.1 && _weightCargo <= 2)
+                        {
+                            Console.WriteLine($"\nПредупреждение! С текущим весом груза в {_weightCargo} т скорость уменьшена на {persent}% - {_speed} км/ч.");
+                        }
                         fuelConsumption(_speed);
                         break; //Выход из цикла
                     }
@@ -137,9 +126,15 @@ namespace AvtoTab
 
         protected void subDrive(double distance)
         {
+            if (Math.Floor(_speed) == 0) //Если показатель скорости у машины равен 0, то будет инициирован разгон
+            {
+                speedUp();
+            }
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
             Console.WriteLine($"\nНеобходимо проехать {distance} км.\n\nНачало поездки.");
             distance -= fuelDistance;
+            double needFuel = distance * (_fuelConsumption / 100); //Требуемое кол-во топлива для преодоления заданного расстояния
+            _currentFuel = fuelDistance > distance ? _currentFuel - needFuel : _currentFuel; //Расстояние, которое может проехать машина с заправленным баком больше, чем то, которое нужно проехать, то от текущего кол-ва топ-ва отнимается требуемое для преодоления заданного расст-я
 
             while (distance > 0) //Цикл езды
             {
@@ -152,6 +147,8 @@ namespace AvtoTab
                 speedUp();
                 fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
                 distance -= fuelDistance; //Обновление расстояния, которое необходимо проехать
+                needFuel = _currentFuel+(distance * (_fuelConsumption / 100));
+                _currentFuel = fuelDistance > distance ? _currentFuel - needFuel : _currentFuel;
             }
 
             _speed = 0;
@@ -171,13 +168,12 @@ namespace AvtoTab
             }
 
             getDistance(avtos);
-            speedUp();
 
             subDrive(_distance);
 
             Console.WriteLine("\nМашина прибыла в точку погрузки.");
             load();
-
+                        
             subDrive(_distanceToUnload);
 
             Console.WriteLine("\nМашина прибыла в точку разгрузки.\nВозврат на базу.");

@@ -33,7 +33,7 @@ namespace AvtoTab
                         {
                             case "1":
                             case "2":
-                            case "3":
+                            case "3":                                
                                 break;
                             default:
                                 Console.WriteLine("\nВведено некорректное значение. Попробуйте снова.\n");
@@ -71,13 +71,13 @@ namespace AvtoTab
                     }
                     else
                     {
-                        var car = _type == "1" ? new Avto() : (_type == "2" ? new Bus() : new Gruz()); //Если тип 1, то создаст автомобиль, если 2 - автобус, остальное - грузовик.
+                        var car = answerType == "1" ? new Avto() : (answerType == "2" ? new Bus() : new Gruz()); //Если тип 1, то создаст автомобиль, если 2 - автобус, остальное - грузовик.
                         car.carCreation(avtoNumber, avtoFCapacity, answerType);
                         avtos.Add(car);
                         string answer = "";
                         while (answer == "")
                         {
-                            Console.WriteLine("\nХотите продолжить? (да/нет)\n");
+                            Console.WriteLine("\nХотите создать еще машину? (да/нет)\n");
                             answer = Console.ReadLine();
                             switch (answer)
                             {
@@ -108,7 +108,7 @@ namespace AvtoTab
             foreach (Avto avto in avtos)
             {
                 string type = avto._type == "1" ? "автомобиль" : (avto._type == "2" ? "автобус" : "грузовик");
-                Console.Write($"\n{i}. {avto._number} - {type} - Топливо: {_currentFuel}/{_fuelCapacity} - Пробег: {_milleage}");
+                Console.Write($"\n{i}. {avto._number} - {type} - Топливо: {avto._currentFuel}/{avto._fuelCapacity} - Пробег: {avto._milleage}");
                 i++;
             }
         }
@@ -190,12 +190,13 @@ namespace AvtoTab
             _milleage = 0;
             _speed = 0;
             _maxSpeed = 180;
-            Console.WriteLine("Машина создана успешно.");
+            
+            Console.WriteLine($"Машина {GetType()} создана успешно.");
         }
 
         protected void DisplayInfo() //Вывод информации о машине
         {
-            string type = _type == "1" ? "автомобиль" : (_type == "2" ? "автобус" : "грузовик");            
+            string type = _type == "1" ? "автомобиль" : (_type == "2" ? "автобус" : "грузовик");
             Console.WriteLine($"Номер машины: {_number}\nТип: {type}\nМаксимальное количество бензина в баке: {Math.Round(_fuelCapacity, 2)} литров\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.\nПробег: {Math.Round(_milleage, 2)} км.");
         }
 
@@ -230,17 +231,25 @@ namespace AvtoTab
             {
                 try
                 {
-                    Console.WriteLine($"\nВведите кол-во бензина (в литрах), на которое хотите заправить машину (макс значение:{Math.Round(_fuelCapacity, 2)}).\n");
-                    double fuelAmount = Convert.ToDouble(Console.ReadLine());
-                    if (_currentFuel + fuelAmount <= _fuelCapacity && fuelAmount > 0) //Условие не позволяет пользователю добавить топлива больше, чем машина может вместить, а также не позволяет ввести отрицательное значение
+                    if (_currentFuel == _fuelCapacity)
                     {
-                        _currentFuel += fuelAmount;
-                        Console.WriteLine($"\nМашина заправлена на {Math.Round(fuelAmount, 2)} литров.\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.");
+                        Console.WriteLine($"\nБак машины полон.");
                         break;
                     }
                     else
                     {
-                        Console.WriteLine("\nНевозможно добавить столько топлива. Попробуйте снова.");
+                        Console.WriteLine($"\nСостояние бензобака: {_currentFuel}/{_fuelCapacity} л.\nВведите кол-во бензина (в литрах), на которое хотите заправить машину (макс значение:{Math.Round(_fuelCapacity, 2)}).\n");
+                        double fuelAmount = Convert.ToDouble(Console.ReadLine());
+                        if (_currentFuel + fuelAmount <= _fuelCapacity && fuelAmount > 0) //Условие не позволяет пользователю добавить топлива больше, чем машина может вместить, а также не позволяет ввести отрицательное значение
+                        {
+                            _currentFuel += fuelAmount;
+                            Console.WriteLine($"\nМашина заправлена на {Math.Round(fuelAmount, 2)} литров.\nТекущее количество топлива: {Math.Round(_currentFuel, 2)} литров.");
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nНевозможно добавить столько топлива. Попробуйте снова.");
+                        }
                     }
                 }
                 catch
@@ -348,9 +357,8 @@ namespace AvtoTab
             Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\n\nПоездка завершена.");
         }
 
-        protected void commandCenter(List<Avto> avtos) //Главный метод
+        protected virtual void commandCenter(List<Avto> avtos) //Главный метод
         {
-
             Console.WriteLine($"\n\nДобро пожаловать на панель управления машины {_number}.\n");
             string continuation = "";
             while (continuation == "")
