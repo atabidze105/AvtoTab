@@ -33,7 +33,7 @@ namespace AvtoTab
                         {
                             case "1":
                             case "2":
-                            case "3":                                
+                            case "3":
                                 break;
                             default:
                                 Console.WriteLine("\nВведено некорректное значение. Попробуйте снова.\n");
@@ -190,7 +190,7 @@ namespace AvtoTab
             _milleage = 0;
             _speed = 0;
             _maxSpeed = 180;
-            
+
             Console.WriteLine($"Машина {GetType()} создана успешно.");
         }
 
@@ -283,6 +283,8 @@ namespace AvtoTab
 
                     Console.WriteLine();
                     distancePlanning(avtos);
+
+                    //добавить массив координат (строки)
 
                     string answer = "";
                     while (answer == "")

@@ -99,7 +99,7 @@ namespace AvtoTab
                 {
                     Console.WriteLine("\nВведите значение скорости (от 1 до 180 км/ч), до которого хотите разогнаться:\n");
                     _speed = Convert.ToDouble(Console.ReadLine());
-                    
+
                     _speed = _weightCargo > 0.1 && _weightCargo <= 1 ? _speed * 0.6 : (_weightCargo > 1 && _weightCargo <= 2 ? _speed * 0.2 : _speed);
                     string persent = _weightCargo > 0.1 && _weightCargo <= 1 ? "40" : (_weightCargo > 1 && _weightCargo <= 2 ? "80" : "");
 
@@ -147,7 +147,7 @@ namespace AvtoTab
                 speedUp();
                 fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
                 distance -= fuelDistance; //Обновление расстояния, которое необходимо проехать
-                needFuel = _currentFuel+(distance * (_fuelConsumption / 100));
+                needFuel = _currentFuel + (distance * (_fuelConsumption / 100));
                 _currentFuel = fuelDistance > distance ? _currentFuel - needFuel : _currentFuel;
             }
 
@@ -173,7 +173,7 @@ namespace AvtoTab
 
             Console.WriteLine("\nМашина прибыла в точку погрузки.");
             load();
-                        
+
             subDrive(_distanceToUnload);
 
             Console.WriteLine("\nМашина прибыла в точку разгрузки.\nВозврат на базу.");
