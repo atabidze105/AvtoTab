@@ -15,7 +15,6 @@ namespace AvtoTab
         protected List<Int32> _coorStop;
 
 
-
         protected override void carCreation(string number, double fuelCapacity, string type)
         {
             base.carCreation(number, fuelCapacity, type);
@@ -107,7 +106,7 @@ namespace AvtoTab
         }
 
 
-        }
+        
 
         protected override void commandCenter(List<Avto> avtos)
         {
@@ -127,7 +126,6 @@ namespace AvtoTab
                         FillFuel();
                         break;
                     case "3":
-                        Way();
                         //планирование маршрута
                         break;
                     case "4":

@@ -16,6 +16,7 @@ namespace AvtoTab
         protected double _milleage;//Пробег
         protected double _speed; //Скорость
         protected double _maxSpeed; //Максимальная скорость
+        protected List<string> _coordinates = new(); //Список координат, по которым проезжает машина
 
         private void carStart(List<Avto> avtos)
         {
@@ -264,7 +265,7 @@ namespace AvtoTab
             _fuelConsumption = speed >= 0 && speed <= 45 ? 12 : (speed > 45 && speed <= 100 ? 9 : 12.5);
         }
 
-        protected virtual void getDistance(List<Avto> avtos)//Вычисление дистанции по кординатам
+        protected virtual void getDistance(List<Avto> avtos)//Вычисление дистанции по кординатам и составление траектории движения
         {
             while (true)
             {
@@ -281,10 +282,50 @@ namespace AvtoTab
 
                     _distance = Math.Sqrt(Math.Pow(_endX - _startX, 2) + Math.Pow(_endY - _startY, 2)); //вычисление расстояния
 
-                    Console.WriteLine();
-                    distancePlanning(avtos);
+                    if (_startX != _endX) //Если начальный Х не равен конечному Х, то за основу построения маршрута берется Х. У находится по формуле прямой через две точки на пл-ти
+                    {
+                        if (_startX < _endX)//Условия для направления движения
+                        {
+                            while (_startX <= _endX)
+                            {
+                                _coordinates.Add(Convert.ToString(_startX));
+                                _startX++;
+                            }
+                        }
+                        else
+                        {
+                            while (_startX >= _endX)
+                            {
+                                _coordinates.Add(Convert.ToString(_startX));
+                                _startX--;
+                            }
+                        }
+                        for (int i = 0; i < _coordinates.Count; i++)
+                        {
+                            _coordinates[i] += $"; {Convert.ToString(_startY + (_endY - _startY) / ((Convert.ToDouble(_coordinates[i]) - _startX) / (_endX - _startX)))}"; //ко всем элементам списка добавляется сооттветствующая координата Y. которая высчитывается по формуле прямой через две точки на плоскости
+                        }
+                    }
+                    else 
+                    {
+                        if (_startY < _endY)
+                        {
+                            while (_startY <= _endY)
+                            {
+                                _coordinates.Add($"{Convert.ToString(_startX)};{Convert.ToString(_startY)}");
+                                _startY++;
+                            }
+                        }
+                        else
+                        {
+                            while (_startY >= _endY)
+                            {
+                                _coordinates.Add($"{Convert.ToString(_startX)};{Convert.ToString(_startY)}");
+                                _startY--;
+                            }
+                        }
+                    }
 
-                    //добавить массив координат (строки)
+                    distancePlanning(avtos);
 
                     string answer = "";
                     while (answer == "")
@@ -303,7 +344,12 @@ namespace AvtoTab
                     }
                     if (answer == "да")
                     {
+                        Console.WriteLine("\nМаршрут запланирован успешно.");
                         break;
+                    }
+                    else
+                    {
+                        _coordinates.Clear();
                     }
                 }
                 catch
@@ -313,13 +359,19 @@ namespace AvtoTab
             }
         }
 
-        protected void distancePlanning(List<Avto> avtos) //Составление траектории движения
+        protected void distancePlanning(List<Avto> avtos) //Вывод потенциальных аварий
         {
-            foreach (Avto avto in avtos)
+            foreach (Avto avto in avtos) 
             {
-                if (_endX == avto._endX && _endY == avto._endY && this != avto)
+                foreach (string coor in _coordinates)
                 {
-                    Console.WriteLine($"Внимание! Возможно столкновение с {avto._number}.");
+                    foreach (string coorAnother in avto._coordinates)
+                    {
+                        if (coor == coorAnother && avto != this)
+                        {
+                            Console.WriteLine($"Внимание! Возможно столкновение с {avto._number} в точке {coor}.");
+                        }
+                    }
                 }
             }
         }
@@ -357,6 +409,7 @@ namespace AvtoTab
             _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
 
             Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\n\nПоездка завершена.");
+            _coordinates.Clear();
         }
 
         protected virtual void commandCenter(List<Avto> avtos) //Главный метод
@@ -365,7 +418,7 @@ namespace AvtoTab
             string continuation = "";
             while (continuation == "")
             {
-                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы заправить машину, выберите \"2\".\n Чтобы начать поездку, выберите \"3\".\n\n");
+                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы запланировать паршрут, выберите \"2\".\n Чтобы заправить машину, выберите \"3\".\n Чтобы начать поездку, выберите \"4\".\n\n");
                 string option = Console.ReadLine();
                 switch (option)
                 {
@@ -374,9 +427,12 @@ namespace AvtoTab
                         DisplayInfo();
                         break;
                     case "2":
-                        FillFuel();
+                        getDistance(avtos);
                         break;
                     case "3":
+                        FillFuel();
+                        break;
+                    case "4":
                         Drive(avtos);
                         break;
                     default:
