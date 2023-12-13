@@ -273,6 +273,7 @@ namespace AvtoTab
                 {
                     Console.WriteLine("\nНеобходимо ввести начальные координаты.\nВведите \"x\":\n");
                     _startX = Convert.ToDouble(Console.ReadLine());
+                    double startSample = _startX; //Переменнаяб дублирующая знечение начального X. Необходима для составлении траектории движения (если использовать вместо нее начальный X, то после счет при составлении списка координат будет некоррекиным)
                     Console.WriteLine("\nВведите \"y\":\n");
                     _startY = Convert.ToDouble(Console.ReadLine());
                     Console.WriteLine("\nНеобходимо ввести конечные координаты.\nВведите \"x\":\n");
@@ -286,23 +287,23 @@ namespace AvtoTab
                     {
                         if (_startX < _endX)//Условия для направления движения
                         {
-                            while (_startX <= _endX)
+                            while (startSample <= _endX)
                             {
-                                _coordinates.Add(Convert.ToString(_startX));
-                                _startX++;
+                                _coordinates.Add(Convert.ToString(startSample));
+                                startSample++;
                             }
                         }
                         else
                         {
-                            while (_startX >= _endX)
+                            while (startSample >= _endX)
                             {
-                                _coordinates.Add(Convert.ToString(_startX));
-                                _startX--;
+                                _coordinates.Add(Convert.ToString(startSample));
+                                startSample--;
                             }
                         }
                         for (int i = 0; i < _coordinates.Count; i++)
                         {
-                            _coordinates[i] += $"; {Convert.ToString(_startY + (_endY - _startY) / ((Convert.ToDouble(_coordinates[i]) - _startX) / (_endX - _startX)))}"; //ко всем элементам списка добавляется сооттветствующая координата Y. которая высчитывается по формуле прямой через две точки на плоскости
+                            _coordinates[i] += $"; {Convert.ToString(_startY + ((_endY - _startY) * (Convert.ToDouble(_coordinates[i]) - _startX) / (_endX - _startX)))}"; //ко всем элементам списка добавляется сооттветствующая координата Y. которая высчитывается по формуле прямой через две точки на плоскости
                         }
                     }
                     else 
@@ -325,7 +326,7 @@ namespace AvtoTab
                         }
                     }
 
-                    distancePlanning(avtos);
+                    distancePlanning(avtos); //Проверка на наличие потенциальных столкновений с другими машинами в точках координат заданного пути
 
                     string answer = "";
                     while (answer == "")
@@ -350,6 +351,7 @@ namespace AvtoTab
                     else
                     {
                         _coordinates.Clear();
+                        Console.WriteLine("\nВыполнен сброс списка остановок. Начните снова с самого начала");
                     }
                 }
                 catch
@@ -361,6 +363,7 @@ namespace AvtoTab
 
         protected void distancePlanning(List<Avto> avtos) //Вывод потенциальных аварий
         {
+            Console.WriteLine("");
             foreach (Avto avto in avtos) 
             {
                 foreach (string coor in _coordinates)
@@ -378,13 +381,18 @@ namespace AvtoTab
 
         protected virtual void Drive(List<Avto> avtos) //Цикл езды
         {
+            while (_coordinates.Count == 0) //Если маршрут не спланирован, будет вызван соответствующий метод
+            {
+                Console.WriteLine("\nНеобходимо запланировать маршрут");
+                getDistance(avtos);
+            }
+
             while (Math.Floor(_currentFuel) == 0) //Если у машины нет топлива, произойдет обращение к методу заправки
             {
                 Console.WriteLine("\nНевозможно начать поездку с пустым бензобаком.\nТребуется дозаправка");
                 FillFuel();
             }
 
-            getDistance(avtos);
             speedUp();
 
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
@@ -418,7 +426,7 @@ namespace AvtoTab
             string continuation = "";
             while (continuation == "")
             {
-                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы запланировать паршрут, выберите \"2\".\n Чтобы заправить машину, выберите \"3\".\n Чтобы начать поездку, выберите \"4\".\n\n");
+                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы запланировать маршрут, выберите \"2\".\n Чтобы заправить машину, выберите \"3\".\n Чтобы начать поездку, выберите \"4\".\n\n");
                 string option = Console.ReadLine();
                 switch (option)
                 {

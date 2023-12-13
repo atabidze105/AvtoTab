@@ -9,10 +9,9 @@ namespace AvtoTab
 {
     internal class Bus : Avto
     {
-        //protected double _maxCapacity; //грузоподъемность (в тоннах)
         protected int _people; //кол-во людей
         protected int _peopleMax; //Макс. кол-во людей
-        protected List<Int32> _coorStop;
+        protected List<string> _coorStop = new();
 
 
         protected override void carCreation(string number, double fuelCapacity, string type)
@@ -20,7 +19,6 @@ namespace AvtoTab
             base.carCreation(number, fuelCapacity, type);
             _people = 0;
             _peopleMax = 30;
-            //_maxCapacity = 2.1;
         }
 
         protected void passengersGet() //Заход пассажиров
@@ -105,8 +103,119 @@ namespace AvtoTab
             }
         }
 
+        protected void stopPlannnimng()
+        {
+            while (true)
+            {
+                try
+                {
+                    if (_coorStop.Count < 2)
+                    {
+                        Console.WriteLine("\nНеобходимо добавить хотя бы две остановки.");
+                    }
 
+                    stopAdd();
+
+                    if (_coorStop.Count > 2)
+                    {
+                        string answer = "";
+                        while (answer == "")
+                        {
+                            Console.WriteLine($"\nТекущее количество остановок: {_coorStop.Count}.\nХотите добавить еще остановку? (да/нет)\n");
+                            answer = Console.ReadLine();
+                            switch (answer)
+                            {
+                                case "да":
+                                case "нет":
+                                    break;
+                                default:
+                                    answer = "";
+                                    break;
+                            }
+                        }
+                        if (answer == "нет")
+                        {
+                            plan();
+                            answer = "";
+                            while (answer == "")
+                            {
+                                Console.WriteLine($"\nВы уверены, что ввели все координаты остановок корректно и хотите продолжить? (да/нет)\n");
+                                answer = Console.ReadLine();
+                                switch (answer)
+                                {
+                                    case "да":
+                                    case "нет":
+                                        break;
+                                    default:
+                                        answer = "";
+                                        break;
+                                }
+                            }
+                            if (answer == "да")
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                _coorStop.Clear();
+                                Console.WriteLine("\nВыполнен сброс списка остановок. Начните снова с самого начала");
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("\nКакое-то значение ведено некорректно. Попробуйте снова.");
+
+                }
+            }
+        }
+
+        protected void plan()
+        {
+            Console.WriteLine($"Автобус {_number} проедет по следующему маршруту (x;y):");
+            int i = 1;
+            foreach (string coor in _coorStop)
+            {
+                Console.WriteLine($"{i}. {coor};");
+                i++;
+            }
+            Console.WriteLine();
+        }
+
+        protected void stopAdd() //Добавление новой остановки в список остановок
+        {
+            while(true)
+            {
+                try
+                {
+                    Console.WriteLine("\nДобавьте координату остановки.\nВведите X:\n");
+                    double stopX = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine("\nВведите Y:\n");
+                    double stopY = Convert.ToDouble(Console.ReadLine());
+
+                    string stopCoor = Convert.ToString(stopX) + ";" + Convert.ToString(stopY);
+
+                    foreach (string coor in _coorStop)
+                    {
+                        if (stopCoor != coor) //Изменить условие СРАВНИТЬ ТЕКУЩУЮ КООРДИНАТУ С ПРЕДЫДУЩЕЙ   
+                        {
+                            _coorStop.Add(coor);
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n");
+                        }
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("\nВведено некорректное значение. Попробуйте снова.");
+                }
+            }
+        }
         
+
 
         protected override void commandCenter(List<Avto> avtos)
         {
@@ -114,7 +223,7 @@ namespace AvtoTab
             string continuation = "";
             while (continuation == "")
             {
-                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы заправить машину, выберите \"2\".\n Чтобы запланировать маршрут, выберите \"3\".\n Чтобы начать поездку, выберите \"4\".\n\n");
+                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы запланировать маршрут, выберите \"2\".\n Чтобы заправить машину, выберите \"3\".\n Чтобы начать поездку, выберите \"4\".\n\n");
                 string option = Console.ReadLine();
                 switch (option)
                 {
@@ -123,10 +232,10 @@ namespace AvtoTab
                         DisplayInfo();
                         break;
                     case "2":
-                        FillFuel();
+                        stopPlannnimng();
                         break;
                     case "3":
-                        //планирование маршрута
+                        FillFuel();
                         break;
                     case "4":
                         Drive(avtos);
