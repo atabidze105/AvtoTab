@@ -10,20 +10,25 @@ namespace AvtoTab
     internal class Bus : Avto
     {
         protected int _people; //кол-во людей
-        protected int _peopleMax; //Макс. кол-во людей
-        protected List<string> _coorStop = new();
-
+        protected double _peopleWeight; //Общий вес людей в автобусе
+        protected List<string> _coorStop = new(); //Список координат остановок
+        protected List<List<string>> _coorWays = new(); //Список списков координат пути от одной остановки до следующей
 
         protected override void carCreation(string number, double fuelCapacity, string type)
         {
             base.carCreation(number, fuelCapacity, type);
             _people = 0;
-            _peopleMax = 30;
+            _peopleWeight = 0;
+        }
+
+        protected void weight()
+        {
+            _peopleWeight = 0.07 * _people;
         }
 
         protected void passengersGet() //Заход пассажиров
         {
-            if (_people < _peopleMax)
+            if (_people < 30)
             {
                 while (true)
                 {
@@ -32,13 +37,9 @@ namespace AvtoTab
                         Console.WriteLine("\nВведите число вошедших пассажиров:\n");
                         int people = Convert.ToInt32(Console.ReadLine());
 
-                        if (people < 0)
+                        if (people > 0)
                         {
-                            Console.WriteLine("\nВведите число больше нуля. Попробуйте снова.\n");
-                        }
-                        else
-                        {
-                            if (_people + people > _peopleMax)
+                            if (_people + people > 30)
                             {
                                 Console.WriteLine("\nНевозможно вместить столько пассажиров. Попробуйте снова.");
                             }
@@ -46,6 +47,19 @@ namespace AvtoTab
                             {
                                 _people += people;
                                 Console.WriteLine($"\nТекущее число пассажиров: {_people}.");
+                                weight();
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            if (people < 0)
+                            {
+                                Console.WriteLine("\nВведите число больше нуля. Попробуйте снова.\n");
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nНикто не покинул автобус.");
                                 break;
                             }
                         }
@@ -85,6 +99,7 @@ namespace AvtoTab
                                 {
                                     _people += people;
                                     Console.WriteLine($"\nТекущее число пассажиров: {_people}.");
+                                    weight();
                                     break;
                                 }
                                 else
@@ -103,7 +118,51 @@ namespace AvtoTab
             }
         }
 
-        protected void stopPlannnimng()
+        protected void fuelConsumption(double speed) //рассчет расхода топлива от скорости
+        {
+            _fuelConsumption = speed >= 0 && speed <= 45 ? 12 : (speed > 45 && speed <= 100 ? 9 : 12.5);
+        }
+
+        protected override void speedUp() 
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("\nВведите значение скорости (от 1 до 180 км/ч), до которого хотите разогнаться:\n");
+                    _speed = Convert.ToDouble(Console.ReadLine());
+
+                    _speed = _peopleWeight > 0.1 && _peopleWeight <= 1 ? _speed * 0.6 : (_peopleWeight > 1 && _peopleWeight <= 2.1 ? _speed * 0.2 : _speed);
+                    string persent = _peopleWeight > 0.1 && _peopleWeight <= 1 ? "40" : (_peopleWeight > 1 && _peopleWeight <= 2.1 ? "80" : "");
+
+                    if (_speed > 0 && _speed <= 180)
+                    {
+                        if (_peopleWeight > 0.1 && _peopleWeight <= 2.1)
+                        {
+                            Console.WriteLine($"\nПредупреждение! С текущим весом груза в {_peopleWeight} т скорость уменьшена на {persent}% - {_speed} км/ч.");
+                        }
+                        fuelConsumption(_speed);
+                        break; //Выход из цикла
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nВведено значение вне заданного диапазона. Попробуйте снова.");
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("\nВведено некорректное значение. Попробуйте снова.");
+                }
+            }
+        }
+
+        protected void k()
+        {
+
+        }
+
+
+        protected void stopPlannnimng() //Планирование маршрута
         {
             while (true)
             {
@@ -116,7 +175,7 @@ namespace AvtoTab
 
                     stopAdd();
 
-                    if (_coorStop.Count > 2)
+                    if (_coorStop.Count > 1)
                     {
                         string answer = "";
                         while (answer == "")
@@ -135,6 +194,11 @@ namespace AvtoTab
                         }
                         if (answer == "нет")
                         {
+                            for (int i = _coorStop.Count - 2 ; i > -1 ; i--) //Дополнение массива координат (возврат на базу) 
+                            {
+                                _coorStop.Add(_coorStop[i]);
+                            }
+
                             plan();
                             answer = "";
                             while (answer == "")
@@ -166,14 +230,13 @@ namespace AvtoTab
                 catch
                 {
                     Console.WriteLine("\nКакое-то значение ведено некорректно. Попробуйте снова.");
-
                 }
             }
         }
 
-        protected void plan()
+        protected void plan() //Отображение списка остановок, которые проедет автобус
         {
-            Console.WriteLine($"Автобус {_number} проедет по следующему маршруту (x;y):");
+            Console.WriteLine($"Автобус {_number} проедет по следующему маршруту (x;y):\n");
             int i = 1;
             foreach (string coor in _coorStop)
             {
@@ -185,7 +248,7 @@ namespace AvtoTab
 
         protected void stopAdd() //Добавление новой остановки в список остановок
         {
-            while(true)
+            while (true)
             {
                 try
                 {
@@ -196,17 +259,41 @@ namespace AvtoTab
 
                     string stopCoor = Convert.ToString(stopX) + ";" + Convert.ToString(stopY);
 
-                    foreach (string coor in _coorStop)
+                    if (_coorStop.Count >= 2)
                     {
-                        if (stopCoor != coor) //Изменить условие СРАВНИТЬ ТЕКУЩУЮ КООРДИНАТУ С ПРЕДЫДУЩЕЙ   
+                        if (stopCoor != _coorStop.Last())
                         {
-                            _coorStop.Add(coor);
+                            Console.WriteLine("\nДобавлена коордиината остановки.");
+                            _coorStop.Add(stopCoor);
+                            break;
                         }
                         else
                         {
-                            Console.WriteLine("\n");
+                            Console.WriteLine("\nНевозможно добавить остановку на координате, идентичной предыдущей. Попробуйте снова.");
                         }
                     }
+                    else
+                    {
+                        if (_coorStop.Count != 0)
+                        {
+                            if (stopCoor != _coorStop[0])
+                            {
+                                Console.WriteLine("\nДобавлена коордиината остановки.");
+                                _coorStop.Add(stopCoor);
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nНевозможно добавить остановку на координате, идентичной предыдущей. Попробуйте снова.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nДобавлена коордиината остановки.");
+                            _coorStop.Add(stopCoor);
+                            break;
+                        }
+                    }                   
                 }
                 catch
                 {
@@ -214,8 +301,47 @@ namespace AvtoTab
                 }
             }
         }
-        
 
+        protected override void Drive(List<Avto> avtos) //Переписать
+        {
+            while (_coordinates.Count == 0) //Если маршрут не спланирован, будет вызван соответствующий метод
+            {
+                Console.WriteLine("\nНеобходимо запланировать маршрут");
+                stopPlannnimng();
+            }
+
+            while (Math.Floor(_currentFuel) == 0) //Если у машины нет топлива, произойдет обращение к методу заправки
+            {
+                Console.WriteLine("\nНевозможно начать поездку с пустым бензобаком.\nТребуется дозаправка");
+                FillFuel();
+            }
+
+            speedUp();
+
+            double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
+            Console.WriteLine($"\nНеобходимо проехать {_distance} км.\n\nНачало поездки.");
+            _distance -= fuelDistance;
+
+            while (_distance > 0) //Цикл езды
+            {
+                _speed = 0;
+                _currentFuel = 0; //обнуление кол-ва топлива
+                _milleage += fuelDistance; //Увеличение пробега
+
+                Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nОсталось ехать {Math.Round(_distance, 2)} км.\nТребуется дозаправка.");
+                FillFuel(); //Обращение к методу заправки
+                speedUp();
+                fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
+                _distance -= fuelDistance; //Обновление расстояния, которое необходимо проехать
+            }
+
+            _speed = 0;
+            _milleage += (fuelDistance += _distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
+            _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
+
+            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\n\nПоездка завершена.");
+            _coordinates.Clear();
+        }
 
         protected override void commandCenter(List<Avto> avtos)
         {

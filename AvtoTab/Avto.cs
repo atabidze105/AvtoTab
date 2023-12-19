@@ -306,7 +306,7 @@ namespace AvtoTab
                             _coordinates[i] += $"; {Convert.ToString(_startY + ((_endY - _startY) * (Convert.ToDouble(_coordinates[i]) - _startX) / (_endX - _startX)))}"; //ко всем элементам списка добавляется сооттветствующая координата Y. которая высчитывается по формуле прямой через две точки на плоскости
                         }
                     }
-                    else 
+                    else
                     {
                         if (_startY < _endY)
                         {
@@ -364,7 +364,7 @@ namespace AvtoTab
         protected void distancePlanning(List<Avto> avtos) //Вывод потенциальных аварий
         {
             Console.WriteLine("");
-            foreach (Avto avto in avtos) 
+            foreach (Avto avto in avtos)
             {
                 foreach (string coor in _coordinates)
                 {
