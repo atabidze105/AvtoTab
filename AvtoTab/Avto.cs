@@ -273,7 +273,7 @@ namespace AvtoTab
                 {
                     Console.WriteLine("\nНеобходимо ввести начальные координаты.\nВведите \"x\":\n");
                     _startX = Convert.ToDouble(Console.ReadLine());
-                    double startSample = _startX; //Переменнаяб дублирующая знечение начального X. Необходима для составлении траектории движения (если использовать вместо нее начальный X, то после счет при составлении списка координат будет некоррекиным)
+                    double startSample = _startX; //Переменная, дублирующая знечение начального X. Необходима для составлении траектории движения (если использовать вместо нее начальный X, то после счет при составлении списка координат будет некоррекиным)
                     Console.WriteLine("\nВведите \"y\":\n");
                     _startY = Convert.ToDouble(Console.ReadLine());
                     Console.WriteLine("\nНеобходимо ввести конечные координаты.\nВведите \"x\":\n");
@@ -361,7 +361,7 @@ namespace AvtoTab
             }
         }
 
-        protected void distancePlanning(List<Avto> avtos) //Вывод потенциальных аварий
+        protected virtual void distancePlanning(List<Avto> avtos) //Вывод потенциальных аварий
         {
             Console.WriteLine("");
             foreach (Avto avto in avtos)

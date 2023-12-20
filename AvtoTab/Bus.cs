@@ -11,7 +11,10 @@ namespace AvtoTab
     {
         protected int _people; //кол-во людей
         protected double _peopleWeight; //Общий вес людей в автобусе
+        protected double _baseX; //Координаты автобусной стоянки 
+        protected double _baseY;
         protected List<string> _coorStop = new(); //Список координат остановок
+        protected List<double> _distances = new();
         protected List<List<string>> _coorWays = new(); //Список списков координат пути от одной остановки до следующей
 
         protected override void carCreation(string number, double fuelCapacity, string type)
@@ -156,13 +159,27 @@ namespace AvtoTab
             }
         }
 
-        protected void k()
+        protected void busBase() //Добавление автобусной стоянки
         {
-
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Необходимо добавить координаты базы.\nВведите X:\n");
+                    _baseX = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine("\nВведите Y:\n");
+                    _baseY = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine("\nКоординаты базы заданы.");
+                    break;
+                }
+                catch
+                {
+                    Console.WriteLine("\nВведено некорректное значение. Попробуйте снова с самого начала.");
+                }
+            }
         }
 
-
-        protected void stopPlannnimng() //Планирование маршрута
+        protected void stopPlanning(List<Avto> avtos) //Планирование маршрута
         {
             while (true)
             {
@@ -198,12 +215,15 @@ namespace AvtoTab
                             {
                                 _coorStop.Add(_coorStop[i]);
                             }
-
+                            getDistances();
                             plan();
+                            distancePlanning(avtos);
+                            fullDistance();
+
                             answer = "";
                             while (answer == "")
                             {
-                                Console.WriteLine($"\nВы уверены, что ввели все координаты остановок корректно и хотите продолжить? (да/нет)\n");
+                                Console.WriteLine($"Вы уверены, что ввели все координаты остановок корректно и хотите продолжить? (да/нет)\n");
                                 answer = Console.ReadLine();
                                 switch (answer)
                                 {
@@ -222,14 +242,17 @@ namespace AvtoTab
                             else
                             {
                                 _coorStop.Clear();
-                                Console.WriteLine("\nВыполнен сброс списка остановок. Начните снова с самого начала");
+                                _distances.Clear();
+                                _coorWays.Clear();
+                                _coordinates.Clear();
+                                Console.WriteLine("\nВыполнен сброс списка остановок. Начните снова с самого начала.");
                             }
                         }
                     }
                 }
                 catch
                 {
-                    Console.WriteLine("\nКакое-то значение ведено некорректно. Попробуйте снова.");
+                    Console.WriteLine("\nКакое-то значение введено некорректно. Попробуйте снова.");
                 }
             }
         }
@@ -259,24 +282,11 @@ namespace AvtoTab
 
                     string stopCoor = Convert.ToString(stopX) + ";" + Convert.ToString(stopY);
 
-                    if (_coorStop.Count >= 2)
+                    if (stopCoor != (Convert.ToString(_baseX) + ";" + Convert.ToString(_baseY)))
                     {
-                        if (stopCoor != _coorStop.Last())
+                        if (_coorStop.Count >= 2)
                         {
-                            Console.WriteLine("\nДобавлена коордиината остановки.");
-                            _coorStop.Add(stopCoor);
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("\nНевозможно добавить остановку на координате, идентичной предыдущей. Попробуйте снова.");
-                        }
-                    }
-                    else
-                    {
-                        if (_coorStop.Count != 0)
-                        {
-                            if (stopCoor != _coorStop[0])
+                            if (stopCoor != _coorStop.Last())
                             {
                                 Console.WriteLine("\nДобавлена коордиината остановки.");
                                 _coorStop.Add(stopCoor);
@@ -289,11 +299,31 @@ namespace AvtoTab
                         }
                         else
                         {
-                            Console.WriteLine("\nДобавлена коордиината остановки.");
-                            _coorStop.Add(stopCoor);
-                            break;
+                            if (_coorStop.Count != 0)
+                            {
+                                if (stopCoor != _coorStop[0])
+                                {
+                                    Console.WriteLine("\nДобавлена коордиината остановки.");
+                                    _coorStop.Add(stopCoor);
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("\nНевозможно добавить остановку на координате, идентичной предыдущей. Попробуйте снова.");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nДобавлена коордиината остановки.");
+                                _coorStop.Add(stopCoor);
+                                break;
+                            }
                         }
-                    }                   
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nНевозможно задать координаты базы как остановку.");
+                    }
                 }
                 catch
                 {
@@ -302,12 +332,122 @@ namespace AvtoTab
             }
         }
 
+        protected void getCoorArray(double x1, double y1, double x2, double y2) //Универсальный метод вычисления расстояния, а также построения маршрута по координатам. На выходе из метода в списки расстояний и пуей добавляются соответственно расстояние и список координат
+        {
+            double startSample = x1;
+            List<string> coordinates = new();
+
+            double distance = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2)); //вычисление расстояния
+            _distances.Add(distance);
+
+            if (x1 != x2) //Если начальный Х не равен конечному Х, то за основу построения маршрута берется Х. У находится по формуле прямой через две точки на пл-ти
+            {
+                if (x1 < x2)//Условия для направления движения
+                {
+                    while (startSample <= x2)
+                    {
+                        coordinates.Add(Convert.ToString(startSample));
+                        startSample++;
+                    }
+                }
+                else
+                {
+                    while (startSample >= x2)
+                    {
+                        coordinates.Add(Convert.ToString(startSample));
+                        startSample--;
+                    }
+                }
+                for (int i = 0; i < coordinates.Count; i++)
+                {
+                    coordinates[i] += $"; {Convert.ToString(y1 + ((y2 - y1) * (Convert.ToDouble(coordinates[i]) - x1) / (x2 - x1)))}"; //ко всем элементам списка добавляется сооттветствующая координата Y. которая высчитывается по формуле прямой через две точки на плоскости
+                }
+            }
+            else
+            {
+                if (y1 < y2)
+                {
+                    while (y1 <= y2)
+                    {
+                        coordinates.Add($"{Convert.ToString(x1)};{Convert.ToString(y1)}");
+                        y1++;
+                    }
+                }
+                else
+                {
+                    while (y1 >= y2)
+                    {
+                        coordinates.Add($"{Convert.ToString(x1)};{Convert.ToString(y1)}");
+                        y1--;
+                    }
+                }
+            }
+
+            _coorWays.Add(coordinates); //Добавление готового списка в список путей
+        }
+
+        protected void getDistances() //Получение расстояний между остановками и путей в координатах
+        {
+            string[] firstStop = _coorStop[0].Split(';');
+            getCoorArray(_baseX, _baseY, Convert.ToDouble(firstStop[0]), Convert.ToDouble(firstStop[1]));
+
+            for (int i = 0; i < _coorStop.Count-1; i++)
+            {
+                string[] fromStop = _coorStop[i].Split(";");
+                string[] toStop = _coorStop[i+1].Split(";");
+                getCoorArray(Convert.ToDouble(fromStop[0]), Convert.ToDouble(fromStop[1]), Convert.ToDouble(toStop[0]), Convert.ToDouble(toStop[1]));
+            }
+
+            string[] lastStop = _coorStop[_coorStop.Count-1].Split(";");
+            getCoorArray(Convert.ToDouble(lastStop[0]), Convert.ToDouble(lastStop[1]), _baseX, _baseY);
+        }
+
+        protected void fullDistance()
+        {
+            int i = 0;
+            List<List<string>> coorWaysHalf = new();
+            for (int j = 0; 0 <= Math.Floor(Convert.ToDouble(_coorStop.Count)/2); j++)
+            {
+                coorWaysHalf.Add(_coorWays[j]);
+            }
+
+            foreach (List<string> coorDistance in coorWaysHalf)
+            {
+                foreach(string coor in coorDistance)
+                {
+                    if (_coordinates.Count == 0)
+                    {
+                        _coordinates.Add(coor);
+                    }
+                    else
+                    {
+                        if (coor != _coordinates[i])
+                        {
+                            _coordinates.Add(coor);
+                            i++;
+                        }
+                    }
+                }
+            }
+        }
+
+        protected override void distancePlanning(List<Avto> avtos)
+        {
+            base.distancePlanning(avtos);
+        }
+
+        protected void subDrive()
+        {
+
+        }
+
+
         protected override void Drive(List<Avto> avtos) //Переписать
         {
-            while (_coordinates.Count == 0) //Если маршрут не спланирован, будет вызван соответствующий метод
+            while (_distances.Count == 0) //Если маршрут не спланирован, будет вызван соответствующий метод
             {
                 Console.WriteLine("\nНеобходимо запланировать маршрут");
-                stopPlannnimng();
+                stopPlanning(avtos);
             }
 
             while (Math.Floor(_currentFuel) == 0) //Если у машины нет топлива, произойдет обращение к методу заправки
@@ -358,7 +498,8 @@ namespace AvtoTab
                         DisplayInfo();
                         break;
                     case "2":
-                        stopPlannnimng();
+                        busBase();
+                        stopPlanning(avtos);
                         break;
                     case "3":
                         FillFuel();
