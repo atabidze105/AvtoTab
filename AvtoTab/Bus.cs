@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -13,6 +14,7 @@ namespace AvtoTab
         protected double _peopleWeight; //Общий вес людей в автобусе
         protected double _baseX; //Координаты автобусной стоянки 
         protected double _baseY;
+        //protected double _distanceCut; //Остаток от расстояния, которое
         protected List<string> _coorStop = new(); //Список координат остановок
         protected List<double> _distances = new();
         protected List<List<string>> _coorWays = new(); //Список списков координат пути от одной остановки до следующей
@@ -31,7 +33,7 @@ namespace AvtoTab
 
         protected void passengersGet() //Заход пассажиров
         {
-            if (_people < 30)
+            if (_people <= 30)
             {
                 while (true)
                 {
@@ -86,7 +88,7 @@ namespace AvtoTab
                         Console.WriteLine("\nВведите число сошедших пассажиров:\n");
                         int people = Convert.ToInt32(Console.ReadLine());
 
-                        if (people >= 0)
+                        if (people <= 0)
                         {
                             Console.WriteLine("\nНевозможно ввести отрицательное значение. Попробуйте снова.");
                         }
@@ -126,7 +128,7 @@ namespace AvtoTab
             _fuelConsumption = speed >= 0 && speed <= 45 ? 12 : (speed > 45 && speed <= 100 ? 9 : 12.5);
         }
 
-        protected override void speedUp() 
+        protected override void speedUp()
         {
             while (true)
             {
@@ -179,6 +181,14 @@ namespace AvtoTab
             }
         }
 
+        protected void listClear()
+        {
+            _coorStop.Clear();
+            _distances.Clear();
+            _coorWays.Clear();
+            _coordinates.Clear();
+        }
+
         protected void stopPlanning(List<Avto> avtos) //Планирование маршрута
         {
             while (true)
@@ -211,7 +221,7 @@ namespace AvtoTab
                         }
                         if (answer == "нет")
                         {
-                            for (int i = _coorStop.Count - 2 ; i > -1 ; i--) //Дополнение массива координат (возврат на базу) 
+                            for (int i = _coorStop.Count - 2; i > -1; i--) //Дополнение массива координат (возврат на базу) 
                             {
                                 _coorStop.Add(_coorStop[i]);
                             }
@@ -241,10 +251,7 @@ namespace AvtoTab
                             }
                             else
                             {
-                                _coorStop.Clear();
-                                _distances.Clear();
-                                _coorWays.Clear();
-                                _coordinates.Clear();
+                                listClear();
                                 Console.WriteLine("\nВыполнен сброс списка остановок. Начните снова с самого начала.");
                             }
                         }
@@ -391,29 +398,41 @@ namespace AvtoTab
             string[] firstStop = _coorStop[0].Split(';');
             getCoorArray(_baseX, _baseY, Convert.ToDouble(firstStop[0]), Convert.ToDouble(firstStop[1]));
 
-            for (int i = 0; i < _coorStop.Count-1; i++)
+            for (int i = 0; i < _coorStop.Count - 1; i++)
             {
                 string[] fromStop = _coorStop[i].Split(";");
-                string[] toStop = _coorStop[i+1].Split(";");
+                string[] toStop = _coorStop[i + 1].Split(";");
                 getCoorArray(Convert.ToDouble(fromStop[0]), Convert.ToDouble(fromStop[1]), Convert.ToDouble(toStop[0]), Convert.ToDouble(toStop[1]));
             }
 
-            string[] lastStop = _coorStop[_coorStop.Count-1].Split(";");
+            string[] lastStop = _coorStop[_coorStop.Count - 1].Split(";");
             getCoorArray(Convert.ToDouble(lastStop[0]), Convert.ToDouble(lastStop[1]), _baseX, _baseY);
+        }
+
+        protected string coorSearch(string coor, List<string> coorArray)
+        {
+            foreach (string coorA in coorArray)
+            {
+                if (coor == coorA)
+                {
+                    return coor;
+                }
+            }
+            return null;            
         }
 
         protected void fullDistance()
         {
             int i = 0;
             List<List<string>> coorWaysHalf = new();
-            for (int j = 0; 0 <= Math.Floor(Convert.ToDouble(_coorStop.Count)/2); j++)
+            for (int j = 0; j <= Math.Floor(Convert.ToDouble(_coorStop.Count) / 2); j++)
             {
                 coorWaysHalf.Add(_coorWays[j]);
             }
 
             foreach (List<string> coorDistance in coorWaysHalf)
             {
-                foreach(string coor in coorDistance)
+                foreach (string coor in coorDistance)
                 {
                     if (_coordinates.Count == 0)
                     {
@@ -423,22 +442,49 @@ namespace AvtoTab
                     {
                         if (coor != _coordinates[i])
                         {
-                            _coordinates.Add(coor);
-                            i++;
+                            if (coorSearch(coor, _coordinates) == null)
+                            {
+                                _coordinates.Add(coor);
+                                i++;
+                            }
                         }
                     }
                 }
             }
         }
 
-        protected override void distancePlanning(List<Avto> avtos)
+        protected void subDrive(double distance, int stop) //исправить ошибку с топливом
         {
-            base.distancePlanning(avtos);
-        }
+            if (Math.Floor(_speed) == 0) //Если показатель скорости у машины равен 0, то будет инициирован разгон
+            {
+                speedUp();
+            }
+            double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
+            Console.WriteLine($"Необходимо проехать {distance} км.\n\nНачало поездки.");
+            distance -= fuelDistance;
+            double needFuel = distance * (_fuelConsumption / 100); //Требуемое кол-во топлива для преодоления заданного расстояния
+            _currentFuel = fuelDistance > distance ? _currentFuel - needFuel : _currentFuel; //Если расстояние, которое может проехать машина с заправленным баком больше, чем то, которое нужно проехать, то от текущего кол-ва топ-ва отнимается требуемое для преодоления заданного расст-я
 
-        protected void subDrive()
-        {
+            while (distance > 0) //Цикл езды
+            {
+                _speed = 0;
+                _currentFuel = 0; //обнуление кол-ва топлива
+                _milleage += fuelDistance; //Увеличение пробега
 
+                Console.WriteLine($"\nАвтобус проехал {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nПассажиров в салоне: {_people} чел..\nОсталось ехать {Math.Round(distance, 2)} км.\nТребуется дозаправка.");
+                FillFuel(); //Обращение к методу заправки
+                speedUp();
+                fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
+                distance -= fuelDistance; //Обновление расстояния, которое необходимо проехать
+                needFuel = _currentFuel + (distance * (_fuelConsumption / 100));
+                _currentFuel = fuelDistance > distance ? _currentFuel - needFuel : _currentFuel;
+            }
+
+            _speed = 0;
+            _fuelConsumption = 0;
+            _milleage += (fuelDistance += distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
+            _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
+            Console.WriteLine($"Пройдено {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nПассажиров в салоне: {_people} чел..");
         }
 
 
@@ -456,31 +502,29 @@ namespace AvtoTab
                 FillFuel();
             }
 
-            speedUp();
+            Console.WriteLine($"Автобус начал движение по заданному маршруту. Для достижения первой остановки осталось проехать {_distances[0]} км.");;
 
-            double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
-            Console.WriteLine($"\nНеобходимо проехать {_distance} км.\n\nНачало поездки.");
-            _distance -= fuelDistance;
-
-            while (_distance > 0) //Цикл езды
+            for (int i = 0; i < _distances.Count-2; i++)
             {
-                _speed = 0;
-                _currentFuel = 0; //обнуление кол-ва топлива
-                _milleage += fuelDistance; //Увеличение пробега
-
-                Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nОсталось ехать {Math.Round(_distance, 2)} км.\nТребуется дозаправка.");
-                FillFuel(); //Обращение к методу заправки
-                speedUp();
-                fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
-                _distance -= fuelDistance; //Обновление расстояния, которое необходимо проехать
+                Console.WriteLine($"\nНачато движение к остановке {i} ({_coorStop[i]}). ");
+                subDrive(_distances[i], i);
+                Console.WriteLine($"\nАвтобус прибыл на остановку {i} ({_coorStop[i]}).");
+                passengersLose();
+                passengersGet();
+                Console.WriteLine($"\nСледующая остановка: {i + 1} ({_coorStop[i + 1]}).");
             }
 
-            _speed = 0;
-            _milleage += (fuelDistance += _distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
-            _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
+            Console.WriteLine($"\nНачато движение к остановке {_distances.Count - 2} ({_coorStop[_distances.Count - 2]}). ");
+            subDrive(_distances[_distances.Count-2], _distances.Count-2);
 
-            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\n\nПоездка завершена.");
-            _coordinates.Clear();
+            Console.WriteLine("\nАвтобус прибыл на конечную остановку. Пассажиры покидают салон.");
+            _people = 0;
+            Console.WriteLine($"\nАвтобус возвращается на базу.");
+
+            subDrive(_distances[_distances.Count - 1], _distances.Count - 1);
+
+            Console.WriteLine("\nАвтобус вернулся на базу.");
+            listClear();
         }
 
         protected override void commandCenter(List<Avto> avtos)
