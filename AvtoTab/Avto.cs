@@ -191,8 +191,9 @@ namespace AvtoTab
             _milleage = 0;
             _speed = 0;
             _maxSpeed = 180;
+            string typeStr = _type == "1" ? "автомобиль" : (_type == "2" ? "автобус" : "грузовик");
 
-            Console.WriteLine($"Машина {GetType()} создана успешно.");
+            Console.WriteLine($"Создана машина: {typeStr}.");
         }
 
         protected void DisplayInfo() //Вывод информации о машине

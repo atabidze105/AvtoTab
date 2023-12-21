@@ -60,11 +60,11 @@ namespace AvtoTab
                         {
                             if (people < 0)
                             {
-                                Console.WriteLine("\nВведите число больше нуля. Попробуйте снова.\n");
+                                Console.WriteLine("\nНевозможно ввести отрицательное значение. Попробуйте снова.\n");
                             }
                             else
                             {
-                                Console.WriteLine("\nНикто не покинул автобус.");
+                                Console.WriteLine("\nНикто не зашел в автобус.");
                                 break;
                             }
                         }
@@ -79,7 +79,7 @@ namespace AvtoTab
 
         protected void passengersLose() //Выход пассажиров
         {
-            if (_people == 0)
+            if (_people != 0)
             {
                 while (true)
                 {
@@ -102,7 +102,7 @@ namespace AvtoTab
                             {
                                 if (people > 0)
                                 {
-                                    _people += people;
+                                    _people -= people;
                                     Console.WriteLine($"\nТекущее число пассажиров: {_people}.");
                                     weight();
                                     break;
@@ -144,7 +144,7 @@ namespace AvtoTab
                     {
                         if (_peopleWeight > 0.1 && _peopleWeight <= 2.1)
                         {
-                            Console.WriteLine($"\nПредупреждение! С текущим весом груза в {_peopleWeight} т скорость уменьшена на {persent}% - {_speed} км/ч.");
+                            Console.WriteLine($"\nПредупреждение! С текущим количеством пассажиров ({_people} чел.) с общим весом в {Math.Round(_peopleWeight, 2)} т скорость уменьшена на {persent}% - {_speed} км/ч.");
                         }
                         fuelConsumption(_speed);
                         break; //Выход из цикла
@@ -197,7 +197,7 @@ namespace AvtoTab
                 {
                     if (_coorStop.Count < 2)
                     {
-                        Console.WriteLine("\nНеобходимо добавить хотя бы две остановки.");
+                        Console.WriteLine($"\nТекущее количество остановок: {_coorStop.Count}.\nНеобходимо добавить хотя бы две остановки.");;
                     }
 
                     stopAdd();
@@ -266,7 +266,7 @@ namespace AvtoTab
 
         protected void plan() //Отображение списка остановок, которые проедет автобус
         {
-            Console.WriteLine($"Автобус {_number} проедет по следующему маршруту (x;y):\n");
+            Console.WriteLine($"\nАвтобус {_number} проедет по следующему маршруту (x;y):\n");
             int i = 1;
             foreach (string coor in _coorStop)
             {
@@ -418,7 +418,7 @@ namespace AvtoTab
                     return coor;
                 }
             }
-            return null;            
+            return null;
         }
 
         protected void fullDistance()
@@ -460,9 +460,9 @@ namespace AvtoTab
                 speedUp();
             }
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
-            Console.WriteLine($"Необходимо проехать {distance} км.\n\nНачало поездки.");
-            distance -= fuelDistance;
+            Console.WriteLine($"Необходимо проехать {Math.Round(distance, 2)} км.\n\nНачало поездки.");
             double needFuel = distance * (_fuelConsumption / 100); //Требуемое кол-во топлива для преодоления заданного расстояния
+            distance -= fuelDistance;
             _currentFuel = fuelDistance > distance ? _currentFuel - needFuel : _currentFuel; //Если расстояние, которое может проехать машина с заправленным баком больше, чем то, которое нужно проехать, то от текущего кол-ва топ-ва отнимается требуемое для преодоления заданного расст-я
 
             while (distance > 0) //Цикл езды
@@ -484,7 +484,7 @@ namespace AvtoTab
             _fuelConsumption = 0;
             _milleage += (fuelDistance += distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
             _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
-            Console.WriteLine($"Пройдено {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nПассажиров в салоне: {_people} чел..");
+            Console.WriteLine($"\nПройдено {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nПассажиров в салоне: {_people} чел..");
         }
 
 
@@ -493,6 +493,7 @@ namespace AvtoTab
             while (_distances.Count == 0) //Если маршрут не спланирован, будет вызван соответствующий метод
             {
                 Console.WriteLine("\nНеобходимо запланировать маршрут");
+                busBase();
                 stopPlanning(avtos);
             }
 
@@ -502,20 +503,23 @@ namespace AvtoTab
                 FillFuel();
             }
 
-            Console.WriteLine($"Автобус начал движение по заданному маршруту. Для достижения первой остановки осталось проехать {_distances[0]} км.");;
+            Console.WriteLine($"Автобус начал движение по заданному маршруту. Для достижения первой остановки осталось проехать {Math.Round(_distances[0],2)} км."); ;
 
-            for (int i = 0; i < _distances.Count-2; i++)
+            for (int i = 0; i < _distances.Count - 2; i++)
             {
-                Console.WriteLine($"\nНачато движение к остановке {i} ({_coorStop[i]}). ");
+                Console.WriteLine($"\nНачато движение к остановке {i+1} ({_coorStop[i]}). ");
                 subDrive(_distances[i], i);
-                Console.WriteLine($"\nАвтобус прибыл на остановку {i} ({_coorStop[i]}).");
-                passengersLose();
+                Console.WriteLine($"\nАвтобус прибыл на остановку {i+1} ({_coorStop[i]}).");
+                //if (i > 0)
+                //{
+                    passengersLose();
+                //}
                 passengersGet();
-                Console.WriteLine($"\nСледующая остановка: {i + 1} ({_coorStop[i + 1]}).");
+                Console.WriteLine($"\nСледующая остановка: {i + 2} ({_coorStop[i + 1]}).");
             }
 
             Console.WriteLine($"\nНачато движение к остановке {_distances.Count - 2} ({_coorStop[_distances.Count - 2]}). ");
-            subDrive(_distances[_distances.Count-2], _distances.Count-2);
+            subDrive(_distances[_distances.Count - 2], _distances.Count - 2);
 
             Console.WriteLine("\nАвтобус прибыл на конечную остановку. Пассажиры покидают салон.");
             _people = 0;
