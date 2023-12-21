@@ -14,7 +14,6 @@ namespace AvtoTab
         protected double _peopleWeight; //Общий вес людей в автобусе
         protected double _baseX; //Координаты автобусной стоянки 
         protected double _baseY;
-        //protected double _distanceCut; //Остаток от расстояния, которое
         protected List<string> _coorStop = new(); //Список координат остановок
         protected List<double> _distances = new();
         protected List<List<string>> _coorWays = new(); //Список списков координат пути от одной остановки до следующей
@@ -453,7 +452,7 @@ namespace AvtoTab
             }
         }
 
-        protected void subDrive(double distance, int stop) //исправить ошибку с топливом
+        protected void subDrive(double distance, int stop) //Поездка
         {
             if (Math.Floor(_speed) == 0) //Если показатель скорости у машины равен 0, то будет инициирован разгон
             {
@@ -488,7 +487,7 @@ namespace AvtoTab
         }
 
 
-        protected override void Drive(List<Avto> avtos) //Переписать
+        protected override void Drive(List<Avto> avtos) //Вся поездка автобуса по прописанному маршруту
         {
             while (_distances.Count == 0) //Если маршрут не спланирован, будет вызван соответствующий метод
             {
