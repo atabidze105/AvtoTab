@@ -132,8 +132,8 @@ namespace AvtoTab
             }
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
             Console.WriteLine($"\nНеобходимо проехать {distance} км.\n\nНачало поездки.");
-            distance -= fuelDistance;
             double needFuel = distance * (_fuelConsumption / 100); //Требуемое кол-во топлива для преодоления заданного расстояния
+            distance -= fuelDistance;
             _currentFuel = fuelDistance > distance ? _currentFuel - needFuel : _currentFuel; //Если расстояние, которое может проехать машина с заправленным баком больше, чем то, которое нужно проехать, то от текущего кол-ва топ-ва отнимается требуемое для преодоления заданного расст-я
 
             while (distance > 0) //Цикл езды
