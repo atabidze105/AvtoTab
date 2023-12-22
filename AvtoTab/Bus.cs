@@ -196,7 +196,7 @@ namespace AvtoTab
                 {
                     if (_coorStop.Count < 2)
                     {
-                        Console.WriteLine($"\nТекущее количество остановок: {_coorStop.Count}.\nНеобходимо добавить хотя бы две остановки.");;
+                        Console.WriteLine($"\nТекущее количество остановок: {_coorStop.Count}.\nНеобходимо добавить хотя бы две остановки."); ;
                     }
 
                     stopAdd();
@@ -500,13 +500,13 @@ namespace AvtoTab
                 FillFuel();
             }
 
-            Console.WriteLine($"Автобус начал движение по заданному маршруту. Для достижения первой остановки осталось проехать {Math.Round(_distances[0],2)} км."); ;
+            Console.WriteLine($"Автобус начал движение по заданному маршруту. Для достижения первой остановки осталось проехать {Math.Round(_distances[0], 2)} км."); ;
 
             for (int i = 0; i < _distances.Count - 2; i++)
             {
-                Console.WriteLine($"\nНачато движение к остановке {i+1} ({_coorStop[i]}). ");
+                Console.WriteLine($"\nНачато движение к остановке {i + 1} ({_coorStop[i]}). ");
                 subDrive(_distances[i], i);
-                Console.WriteLine($"\nАвтобус прибыл на остановку {i+1} ({_coorStop[i]}).");
+                Console.WriteLine($"\nАвтобус прибыл на остановку {i + 1} ({_coorStop[i]}).");
                 passengersLose();
                 passengersGet();
                 Console.WriteLine($"\nСледующая остановка: {i + 2} ({_coorStop[i + 1]}).");
@@ -570,6 +570,5 @@ namespace AvtoTab
                 continuation = Console.ReadLine();
             }
         }
-
     }
 }

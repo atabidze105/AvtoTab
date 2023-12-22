@@ -363,6 +363,7 @@ namespace AvtoTab
 
         protected virtual void distancePlanning(List<Avto> avtos) //Вывод потенциальных аварий
         {
+            int i = 0;
             Console.WriteLine("");
             foreach (Avto avto in avtos)
             {
@@ -373,9 +374,14 @@ namespace AvtoTab
                         if (coor == coorAnother && avto != this)
                         {
                             Console.WriteLine($"Внимание! Возможно столкновение с {avto._number} в точке {coor}.");
+                            i = 1;
                         }
                     }
                 }
+            }
+            if (i == 0)
+            {
+                Console.WriteLine("Потенциальные столкновения не обнаружены.");
             }
         }
 

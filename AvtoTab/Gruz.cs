@@ -43,7 +43,7 @@ namespace AvtoTab
                     coorPlanning(_deliveryX, _deliveryY, _startX, _startY);
                     fullDistance();
                     distancePlanning(avtos);
-                    
+
 
                     string answer = "";
                     while (answer == "")
