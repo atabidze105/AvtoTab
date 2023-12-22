@@ -397,8 +397,10 @@ namespace AvtoTab
             speedUp();
 
             double fuelDistance = _currentFuel / (_fuelConsumption / 100); //Расстояние, которое может проехать машина с заправленным баком
-            Console.WriteLine($"\nНеобходимо проехать {_distance} км.\n\nНачало поездки.");
+            Console.WriteLine($"\nНеобходимо проехать {Math.Round(_distance, 2)} км.\n\nНачало поездки.");
+            double needFuel = _distance * (_fuelConsumption / 100); //Требуемое кол-во топлива для преодоления заданного расстояния
             _distance -= fuelDistance;
+            _currentFuel = fuelDistance > _distance ? _currentFuel - needFuel : _currentFuel; //Если расстояние, которое может проехать машина с заправленным баком больше, чем то, которое нужно проехать, то от текущего кол-ва топ-ва отнимается требуемое для преодоления заданного расст-я
 
             while (_distance > 0) //Цикл езды
             {
@@ -406,18 +408,18 @@ namespace AvtoTab
                 _currentFuel = 0; //обнуление кол-ва топлива
                 _milleage += fuelDistance; //Увеличение пробега
 
-                Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nОсталось ехать {Math.Round(_distance, 2)} км.\nТребуется дозаправка.");
+                Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nРасход топлива: {_fuelConsumption} л на 100 км.\nОсталось ехать {Math.Round(_distance, 2)} км.\nТребуется дозаправка.");
                 FillFuel(); //Обращение к методу заправки
                 speedUp();
                 fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
                 _distance -= fuelDistance; //Обновление расстояния, которое необходимо проехать
             }
 
+
             _speed = 0;
             _milleage += (fuelDistance += _distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
-            _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
-
-            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\n\nПоездка завершена.");
+            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nРасход топлива: {_fuelConsumption} л на 100 км.");
+            _fuelConsumption = 0;
             _coordinates.Clear();
         }
 

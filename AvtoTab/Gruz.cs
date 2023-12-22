@@ -142,7 +142,7 @@ namespace AvtoTab
                 _currentFuel = 0; //обнуление кол-ва топлива
                 _milleage += fuelDistance; //Увеличение пробега
 
-                Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nВес груза: {_weightCargo} т.\nОсталось ехать {Math.Round(distance, 2)} км.\nТребуется дозаправка.");
+                Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nРасход топлива: {_fuelConsumption} л на 100 км.\nВес груза: {_weightCargo} т.\nОсталось ехать {Math.Round(distance, 2)} км.\nТребуется дозаправка.");
                 FillFuel(); //Обращение к методу заправки
                 speedUp();
                 fuelDistance = _currentFuel / (_fuelConsumption / 100); //Обновление расстояния, котрое может проехать машина с заправленным на текущее кол-во топлива баком
@@ -152,11 +152,9 @@ namespace AvtoTab
             }
 
             _speed = 0;
-            _fuelConsumption = 0;
             _milleage += (fuelDistance += distance);//По завершении цикла расстояние становится отрицательным значением. Здесь остаток расстояния складывается с расстоянием,которая может проехать машина, после чего обновляется пробег
-            _currentFuel -= (fuelDistance * (_fuelConsumption / 100)); //Определение остатка топлива
-
-            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nВес груза: {_weightCargo} т.");
+            Console.WriteLine($"\nМашина проехала {Math.Round(fuelDistance, 2)} км.\nПробег: {Math.Round(_milleage, 2)}.\nОстаток топлива: {Math.Round(_currentFuel, 2)} литров.\nРасход топлива: {_fuelConsumption} л на 100 км.\nВес груза: {_weightCargo} т.");
+            _fuelConsumption = 0;
         }
 
         protected override void Drive(List<Avto> avtos) //Поездка для грузовика
@@ -181,6 +179,41 @@ namespace AvtoTab
             subDrive(_distanceBack);
 
             Console.WriteLine("\nМашина прибыла на базу.\n\nПоездка завершена.");
+            _coordinates.Clear();
+        }
+
+        //protected override 
+
+        protected virtual void commandCenter(List<Avto> avtos) //Главный метод
+        {
+            Console.WriteLine($"\n\nДобро пожаловать на панель управления машины {_number}.\n");
+            string continuation = "";
+            while (continuation == "")
+            {
+                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы запланировать маршрут, выберите \"2\".\n Чтобы заправить машину, выберите \"3\".\n Чтобы начать поездку, выберите \"4\".\n\n");
+                string option = Console.ReadLine();
+                switch (option)
+                {
+                    case "1":
+                        Console.WriteLine("\n");
+                        DisplayInfo();
+                        break;
+                    case "2":
+                        getDistance(avtos);
+                        break;
+                    case "3":
+                        FillFuel();
+                        break;
+                    case "4":
+                        Drive(avtos);
+                        break;
+                    default:
+                        Console.WriteLine("\nКоманды с таким номером не существует.");
+                        break;
+                }
+                Console.WriteLine("\nЧтобы продолжить нажмите \"Enter\".\nЧтобы выйти напишите что-нибудь и нажмите \"Enter\".\n");
+                continuation = Console.ReadLine();
+            }
         }
     }
 }
