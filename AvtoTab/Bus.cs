@@ -227,7 +227,6 @@ namespace AvtoTab
                             getDistances();
                             plan();
                             fullDistance();
-                            distancePlanning(avtos);
 
                             answer = "";
                             while (answer == "")
@@ -508,10 +507,7 @@ namespace AvtoTab
                 Console.WriteLine($"\nНачато движение к остановке {i+1} ({_coorStop[i]}). ");
                 subDrive(_distances[i], i);
                 Console.WriteLine($"\nАвтобус прибыл на остановку {i+1} ({_coorStop[i]}).");
-                //if (i > 0)
-                //{
-                    passengersLose();
-                //}
+                passengersLose();
                 passengersGet();
                 Console.WriteLine($"\nСледующая остановка: {i + 2} ({_coorStop[i + 1]}).");
             }
@@ -535,7 +531,7 @@ namespace AvtoTab
             string continuation = "";
             while (continuation == "")
             {
-                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы запланировать маршрут, выберите \"2\".\n Чтобы заправить машину, выберите \"3\".\n Чтобы начать поездку, выберите \"4\".\n\n");
+                Console.WriteLine(" Чтобы узнать информацию о машине, выберите \"1\".\n Чтобы запланировать маршрут, выберите \"2\".\n Чтобы проверить маршрут на возможность попадания в аварию, нажмите \"3\".\n Чтобы заправить машину, выберите \"4\".\n Чтобы начать поездку, выберите \"5\".\n\n");
                 string option = Console.ReadLine();
                 switch (option)
                 {
@@ -548,9 +544,22 @@ namespace AvtoTab
                         stopPlanning(avtos);
                         break;
                     case "3":
-                        FillFuel();
+                        if (_coordinates.Count == 0)
+                        {
+                            Console.WriteLine("\nЧтобы проверить маршрут, необходимо его запланировать.");
+                            busBase();
+                            stopPlanning(avtos);
+                            distancePlanning(avtos); //Проверка на наличие потенциальных столкновений с другими машинами в точках координат заданного пути
+                        }
+                        else
+                        {
+                            distancePlanning(avtos); //Проверка на наличие потенциальных столкновений с другими машинами в точках координат заданного пути
+                        }
                         break;
                     case "4":
+                        FillFuel();
+                        break;
+                    case "5":
                         Drive(avtos);
                         break;
                     default:
