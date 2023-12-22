@@ -226,8 +226,8 @@ namespace AvtoTab
                             }
                             getDistances();
                             plan();
-                            distancePlanning(avtos);
                             fullDistance();
+                            distancePlanning(avtos);
 
                             answer = "";
                             while (answer == "")
