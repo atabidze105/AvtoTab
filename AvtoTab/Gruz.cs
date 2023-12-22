@@ -10,6 +10,7 @@ namespace AvtoTab
         protected double _distanceBack; //расстояние от места разгрузки к начальным координатам
         protected double _deliveryX; //координаты места разгрузки
         protected double _deliveryY;
+        protected List<List<string>> _coordinatesAll = new(); //Координаты всего пути
 
 
 
@@ -37,7 +38,12 @@ namespace AvtoTab
                     _distanceBack = Math.Sqrt(Math.Pow(_startX - _deliveryX, 2) + Math.Pow(_startY - _deliveryY, 2)); //вычисление расстояния к точке погрузки
 
                     Console.WriteLine();
+                    coorPlanning(_startX, _startY, _endX, _endY);
+                    coorPlanning(_endX, _endY, _deliveryX, _deliveryY);
+                    coorPlanning(_deliveryX, _deliveryY, _startX, _startY);
+                    fullDistance();
                     distancePlanning(avtos);
+                    
 
                     string answer = "";
                     while (answer == "")
@@ -64,6 +70,96 @@ namespace AvtoTab
                     Console.WriteLine("\nКоординаты введены некорректно. Попробуйте снова с самого начала.");
                 }
             }
+        }
+
+        protected void coorPlanning(double x1, double y1, double x2, double y2)
+        {
+            double startSample = x1;
+            List<string> coordinates = new();
+
+
+            if (x1 != x2) //Если начальный Х не равен конечному Х, то за основу построения маршрута берется Х. У находится по формуле прямой через две точки на пл-ти
+            {
+                if (x1 < x2)//Условия для направления движения
+                {
+                    while (startSample <= x2)
+                    {
+                        coordinates.Add(Convert.ToString(startSample));
+                        startSample++;
+                    }
+                }
+                else
+                {
+                    while (startSample >= x2)
+                    {
+                        coordinates.Add(Convert.ToString(startSample));
+                        startSample--;
+                    }
+                }
+                for (int i = 0; i < coordinates.Count; i++)
+                {
+                    coordinates[i] += $"; {Convert.ToString(y1 + ((y2 - y1) * (Convert.ToDouble(coordinates[i]) - x1) / (x2 - x1)))}"; //ко всем элементам списка добавляется сооттветствующая координата Y. которая высчитывается по формуле прямой через две точки на плоскости
+                }
+            }
+            else
+            {
+                if (y1 < y2)
+                {
+                    while (y1 <= y2)
+                    {
+                        coordinates.Add($"{Convert.ToString(x1)};{Convert.ToString(y1)}");
+                        y1++;
+                    }
+                }
+                else
+                {
+                    while (y1 >= y2)
+                    {
+                        coordinates.Add($"{Convert.ToString(x1)};{Convert.ToString(y1)}");
+                        y1--;
+                    }
+                }
+            }
+
+            _coordinatesAll.Add(coordinates);
+        }
+
+        protected void fullDistance()
+        {
+            int i = 0;
+            foreach (List<string> coorDistance in _coordinatesAll)
+            {
+                foreach (string coor in coorDistance)
+                {
+                    if (_coordinates.Count == 0)
+                    {
+                        _coordinates.Add(coor);
+                    }
+                    else
+                    {
+                        if (coor != _coordinates[i])
+                        {
+                            if (coorSearch(coor, _coordinates) == null)
+                            {
+                                _coordinates.Add(coor);
+                                i++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        protected string coorSearch(string coor, List<string> coorArray)
+        {
+            foreach (string coorA in coorArray)
+            {
+                if (coor == coorA)
+                {
+                    return coor;
+                }
+            }
+            return null;
         }
 
         protected void load()
@@ -159,13 +255,16 @@ namespace AvtoTab
 
         protected override void Drive(List<Avto> avtos) //Поездка для грузовика
         {
+            while (_distance < 0)
+            {
+                Console.WriteLine("\nНеобходимо запланировать маршрут");
+                getDistance(avtos);
+            }
             while (Math.Floor(_currentFuel) == 0) //Если у машины нет топлива, произойдет обращение к методу заправки
             {
                 Console.WriteLine("\nНевозможно начать поездку с пустым бензобаком.\nТребуется дозаправка");
                 FillFuel();
             }
-
-            getDistance(avtos);
 
             subDrive(_distance);
 
