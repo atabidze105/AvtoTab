@@ -87,7 +87,7 @@ namespace AvtoTab
                         Console.WriteLine("\nВведите число сошедших пассажиров:\n");
                         int people = Convert.ToInt32(Console.ReadLine());
 
-                        if (people <= 0)
+                        if (people < 0)
                         {
                             Console.WriteLine("\nНевозможно ввести отрицательное значение. Попробуйте снова.");
                         }
